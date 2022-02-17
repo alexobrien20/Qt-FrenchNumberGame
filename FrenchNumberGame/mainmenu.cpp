@@ -1,11 +1,41 @@
 #include "mainmenu.h"
 #include "ui_mainmenu.h"
+#include <QIntValidator>
+#include <QDebug>
 
 MainMenu::MainMenu(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainMenu)
 {
     ui->setupUi(this);
+
+    QValidator* RangeValidator = new QIntValidator(1, INT_MAX, this);
+    QValidator* AmountValidator = new QIntValidator(1, 100, this);
+    ui->LowestInput->setValidator(RangeValidator);
+    ui->HighestInput->setValidator(RangeValidator);
+    ui->AmountInput->setValidator(AmountValidator);
+    connect(ui->StartButton, &QPushButton::pressed, this, &MainMenu::on_StartButton_clicked);
+}
+
+void MainMenu::on_StartButton_clicked()
+{
+    qDebug() << "Clicked!";
+    int Lowest = ui->LowestInput->text().toInt();
+    int Highest = ui->HighestInput->text().toInt();
+    if(Highest < Lowest)
+    {
+        ui->ErrorLabel->setText(tr("Highest must be greater or equal to lowest!"));
+    }
+    else if(Lowest == 0)
+    {
+        ui->ErrorLabel->setText(tr("Lowest must be greater than zero!"));
+    }
+    else if(Highest >= INT_MAX)
+    {
+        QString ErrorMsg = QString("Highest must be less than %1").arg(INT_MAX);
+        ui->ErrorLabel->setText(ErrorMsg);
+    }
+
 }
 
 std::string NumberToEnglish(long long number)
@@ -89,4 +119,6 @@ MainMenu::~MainMenu()
 {
     delete ui;
 }
+
+
 
