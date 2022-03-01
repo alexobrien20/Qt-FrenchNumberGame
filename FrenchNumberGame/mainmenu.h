@@ -2,6 +2,8 @@
 #define MAINMENU_H
 
 #include <QMainWindow>
+#include <gamescreen.h>
+#include <endscreen.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainMenu; }
@@ -20,5 +22,7 @@ private slots:
 
 private:
     Ui::MainMenu *ui;
+    GameScreen* GamePage = new GameScreen;
+    EndScreen* EndPage = new EndScreen;
 };
 #endif // MAINMENU_H
