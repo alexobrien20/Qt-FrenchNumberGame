@@ -14,10 +14,12 @@ MainMenu::MainMenu(QWidget *parent)
     ui->LowestInput->setValidator(RangeValidator);
     ui->HighestInput->setValidator(RangeValidator);
     ui->AmountInput->setValidator(AmountValidator);
-    connect(ui->StartButton, &QPushButton::pressed, this, &MainMenu::on_StartButton_clicked);
-    connect(EndPage, )
     ui->stackedWidget->addWidget(GamePage);
     ui->stackedWidget->addWidget(EndPage);
+    connect(ui->StartButton, &QPushButton::pressed, this, &MainMenu::on_StartButton_clicked);
+    connect(GamePage, &GameScreen::GameOverSignal, this, &MainMenu::SetEndScreenWidget);
+    connect(EndPage, &EndScreen::AgainButtonClicked, this, &MainMenu::on_StartButton_clicked);
+    connect(EndPage, &EndScreen::MenuButtonClicked, this, [this](){this->ui->stackedWidget->setCurrentIndex(0);});
 }
 
 void MainMenu::on_StartButton_clicked()
@@ -33,9 +35,16 @@ void MainMenu::on_StartButton_clicked()
     {
         ui->ErrorLabel->setText(tr("Lowest must be greater than zero!"));
     }
-    ui->stackedWidget->setCurrentIndex(1);
+    ui->stackedWidget->setCurrentWidget(GamePage);
     GamePage->StartGame(Lowest, Highest, Amount);
 }
+
+void MainMenu::SetEndScreenWidget(int Score)
+{
+    EndPage->SetScore(Score);
+    ui->stackedWidget->setCurrentWidget(EndPage);
+}
+
 
 
 MainMenu::~MainMenu()

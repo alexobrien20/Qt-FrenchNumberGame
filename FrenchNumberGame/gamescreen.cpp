@@ -30,6 +30,8 @@ void GameScreen::LoadFrenchNumbers()
 
 void GameScreen::StartGame(uint Lowest, uint Highest, int Amount)
 {
+    FrenchNumbers.clear();
+    EnglishNumbers.clear();
     for(int i = 0; i < Amount; i++)
     {
         quint32 RandomNumber= QRandomGenerator64::global()->bounded(Lowest, Highest);
@@ -54,6 +56,7 @@ void GameScreen::on_EnterButton_clicked()
     if(CurrentNumber + 1 == EnglishNumbers.end())
     {
         qDebug() << "Over!";
+        emit GameOverSignal(Score);
         return;
     }
     CurrentNumber++;
@@ -64,6 +67,12 @@ void GameScreen::on_EnterButton_clicked()
 
 void GameScreen::on_SkipButton_clicked()
 {
+    if(CurrentNumber + 1 == EnglishNumbers.end())
+    {
+        qDebug() << "Over!";
+        emit GameOverSignal(Score);
+        return;
+    }
     CurrentNumber++;
     CurrentAnswer++;
     ui->WordLabel->setText(*CurrentNumber);

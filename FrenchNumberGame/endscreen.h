@@ -13,7 +13,17 @@ class EndScreen : public QWidget
 
 public:
     explicit EndScreen(QWidget *parent = nullptr);
+    void SetScore(int);
     ~EndScreen();
+
+private slots:
+    void on_AgainButton_clicked();
+    void on_MenuButton_clicked();
+
+signals:
+    void MenuButtonClicked();
+    void AgainButtonClicked();
+
 
 private:
     Ui::EndScreen *ui;

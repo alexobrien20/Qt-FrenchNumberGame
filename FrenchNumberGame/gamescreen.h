@@ -18,10 +18,11 @@ public:
 
 private slots:
     void on_EnterButton_clicked();
-
     void on_SkipButton_clicked();
-
     void on_ClearButton_clicked();
+
+signals:
+    void GameOverSignal(int);
 
 private:
     Ui::GameScreen *ui;

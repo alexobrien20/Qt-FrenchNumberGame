@@ -17,6 +17,9 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
      <widget class="QLabel" name="WordLabel">
+      <property name="styleSheet">
+       <string notr="true">font-size: 30px;</string>
+      </property>
       <property name="text">
        <string/>
       </property>

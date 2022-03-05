@@ -19,6 +19,7 @@ public:
 
 private slots:
     void on_StartButton_clicked();
+    void SetEndScreenWidget(int);
 
 private:
     Ui::MainMenu *ui;
