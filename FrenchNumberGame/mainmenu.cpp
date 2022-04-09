@@ -11,18 +11,26 @@ MainMenu::MainMenu(QWidget *parent)
 
     QValidator* RangeValidator = new QIntValidator(1, INT_MAX, this);
     QValidator* AmountValidator = new QIntValidator(1, 100, this);
+    QWidget* MainScreenPage = ui->stackedWidget->widget(1);
+    QWidget* GameSettingsPage = ui->stackedWidget->widget(0);
+    ui->stackedWidget->setCurrentWidget(MainScreenPage);
     ui->LowestInput->setValidator(RangeValidator);
     ui->HighestInput->setValidator(RangeValidator);
     ui->AmountInput->setValidator(AmountValidator);
     ui->stackedWidget->addWidget(GamePage);
     ui->stackedWidget->addWidget(EndPage);
-    connect(ui->StartButton, &QPushButton::pressed, this, &MainMenu::on_StartButton_clicked);
+    ui->stackedWidget->addWidget(MultiPlayerPage);
+    connect(ui->StartButton, &QPushButton::clicked, this, &MainMenu::StartButtonClicked);
     connect(GamePage, &GameScreen::GameOverSignal, this, &MainMenu::SetEndScreenWidget);
-    connect(EndPage, &EndScreen::AgainButtonClicked, this, &MainMenu::on_StartButton_clicked);
-    connect(EndPage, &EndScreen::MenuButtonClicked, this, [this](){this->ui->stackedWidget->setCurrentIndex(0);});
+    connect(EndPage, &EndScreen::AgainButtonClicked, this, &MainMenu::StartButtonClicked);
+    connect(EndPage, &EndScreen::MenuButtonClicked, this, [=](){this->ui->stackedWidget->setCurrentWidget(MainScreenPage);});
+    connect(MultiPlayerPage, &MultiPlayerScreen::MenuButtonClickedSignal, this, [=](){this->ui->stackedWidget->setCurrentWidget(MainScreenPage);});
+    connect(ui->SinglePlayerButton, &QPushButton::clicked, this, [=](){this->ui->stackedWidget->setCurrentWidget(GameSettingsPage);});
+    connect(ui->MultiPlayerButton, &QPushButton::clicked, this, [=](){this->ui->stackedWidget->setCurrentWidget(MultiPlayerPage);});
+    connect(ui->MainMenuButton, &QPushButton::clicked, this, [=](){this->ui->stackedWidget->setCurrentWidget(MainScreenPage);});
 }
 
-void MainMenu::on_StartButton_clicked()
+void MainMenu::StartButtonClicked()
 {
     long Lowest = ui->LowestInput->text().toUInt();
     long Highest = ui->HighestInput->text().toUInt();

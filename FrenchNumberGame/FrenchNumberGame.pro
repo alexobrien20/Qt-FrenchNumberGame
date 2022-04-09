@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -12,17 +12,20 @@ SOURCES += \
     endscreen.cpp \
     gamescreen.cpp \
     main.cpp \
-    mainmenu.cpp
+    mainmenu.cpp \
+    multiplayerscreen.cpp
 
 HEADERS += \
     endscreen.h \
     gamescreen.h \
-    mainmenu.h
+    mainmenu.h \
+    multiplayerscreen.h
 
 FORMS += \
     endscreen.ui \
     gamescreen.ui \
-    mainmenu.ui
+    mainmenu.ui \
+    multiplayerscreen.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

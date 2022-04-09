@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <gamescreen.h>
 #include <endscreen.h>
+#include <multiplayerscreen.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainMenu; }
@@ -18,12 +19,14 @@ public:
     ~MainMenu();
 
 private slots:
-    void on_StartButton_clicked();
+    void StartButtonClicked();
     void SetEndScreenWidget(int);
 
 private:
     Ui::MainMenu *ui;
     GameScreen* GamePage = new GameScreen;
     EndScreen* EndPage = new EndScreen;
+    MultiPlayerScreen* MultiPlayerPage = new MultiPlayerScreen;
+
 };
 #endif // MAINMENU_H
