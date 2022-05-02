@@ -24,10 +24,16 @@ MainMenu::MainMenu(QWidget *parent)
     connect(GamePage, &GameScreen::GameOverSignal, this, &MainMenu::SetEndScreenWidget);
     connect(EndPage, &EndScreen::AgainButtonClicked, this, &MainMenu::StartButtonClicked);
     connect(EndPage, &EndScreen::MenuButtonClicked, this, [=](){this->ui->stackedWidget->setCurrentWidget(MainScreenPage);});
+    connect(EndPage, &EndScreen::MultiMenuButtonClicked, MultiPlayerPage, &MultiPlayerScreen::DisconnectSocket);
+    connect(EndPage, &EndScreen::MultiLobbyButtonClicked, this, &MainMenu::HandleReturnToLobby);
     connect(MultiPlayerPage, &MultiPlayerScreen::MenuButtonClickedSignal, this, [=](){this->ui->stackedWidget->setCurrentWidget(MainScreenPage);});
+    connect(MultiPlayerPage, &MultiPlayerScreen::GameEnded, this, &MainMenu::SetMultiPlayerEndScreenWidget);
+    connect(MultiPlayerPage, &MultiPlayerScreen::GameScoreUpdated, EndPage, &EndScreen::UpdateScoreboard);
     connect(ui->SinglePlayerButton, &QPushButton::clicked, this, [=](){this->ui->stackedWidget->setCurrentWidget(GameSettingsPage);});
     connect(ui->MultiPlayerButton, &QPushButton::clicked, this, [=](){this->ui->stackedWidget->setCurrentWidget(MultiPlayerPage);});
     connect(ui->MainMenuButton, &QPushButton::clicked, this, [=](){this->ui->stackedWidget->setCurrentWidget(MainScreenPage);});
+    connect(ui->SingleMenuButton, &QPushButton::clicked, this, [=](){this->ui->stackedWidget->setCurrentWidget(MainScreenPage);});
+    connect(this, &MainMenu::MultiChangeWidgetIndex, MultiPlayerPage, &MultiPlayerScreen::ChangeWidgetIndex);
 }
 
 void MainMenu::StartButtonClicked()
@@ -53,7 +59,18 @@ void MainMenu::SetEndScreenWidget(int Score)
     ui->stackedWidget->setCurrentWidget(EndPage);
 }
 
+void MainMenu::SetMultiPlayerEndScreenWidget(int Score, bool BClient)
+{
+    ui->stackedWidget->setCurrentWidget(EndPage);
+    EndPage->MultiPlayerSetUp(Score, BClient);
+}
 
+
+void MainMenu::HandleReturnToLobby(int Index)
+{
+    ui->stackedWidget->setCurrentWidget(MultiPlayerPage);
+    emit MultiChangeWidgetIndex(Index);
+}
 
 MainMenu::~MainMenu()
 {

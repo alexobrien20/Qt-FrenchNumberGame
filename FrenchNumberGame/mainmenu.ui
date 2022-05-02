@@ -41,7 +41,7 @@ font-weight: bold;</string>
          </widget>
         </item>
         <item>
-         <layout class="QGridLayout" name="gridLayout">
+         <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,0">
           <property name="leftMargin">
            <number>50</number>
           </property>
@@ -54,20 +54,6 @@ font-weight: bold;</string>
           <property name="bottomMargin">
            <number>50</number>
           </property>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="HighestInput">
-            <property name="text">
-             <string>10</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2" alignment="Qt::AlignHCenter|Qt::AlignBottom">
-           <widget class="QLabel" name="AmountLabel">
-            <property name="text">
-             <string>Amount</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="0" alignment="Qt::AlignHCenter|Qt::AlignBottom">
            <widget class="QLabel" name="LowestLabel">
             <property name="text">
@@ -75,17 +61,10 @@ font-weight: bold;</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1" alignment="Qt::AlignHCenter|Qt::AlignBottom">
-           <widget class="QLabel" name="HighestLabel">
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="HighestInput">
             <property name="text">
-             <string>Highest</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" colspan="3">
-           <widget class="QPushButton" name="StartButton">
-            <property name="text">
-             <string>Start</string>
+             <string>10</string>
             </property>
            </widget>
           </item>
@@ -96,12 +75,44 @@ font-weight: bold;</string>
             </property>
            </widget>
           </item>
+          <item row="0" column="1" alignment="Qt::AlignHCenter|Qt::AlignBottom">
+           <widget class="QLabel" name="HighestLabel">
+            <property name="text">
+             <string>Highest</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2" alignment="Qt::AlignHCenter|Qt::AlignBottom">
+           <widget class="QLabel" name="AmountLabel">
+            <property name="text">
+             <string>Amount</string>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="2">
            <widget class="QLineEdit" name="AmountInput">
             <property name="text">
              <string>10</string>
             </property>
            </widget>
+          </item>
+          <item row="2" column="0" colspan="3">
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="0" column="0">
+             <widget class="QPushButton" name="SingleMenuButton">
+              <property name="text">
+               <string>Main Menu</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QPushButton" name="StartButton">
+              <property name="text">
+               <string>Start</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </item>

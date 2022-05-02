@@ -10,16 +10,22 @@ CONFIG += c++11
 
 SOURCES += \
     endscreen.cpp \
+    game.cpp \
     gamescreen.cpp \
     main.cpp \
     mainmenu.cpp \
-    multiplayerscreen.cpp
+    multiplayerscreen.cpp \
+    tcpclient.cpp \
+    tcpserver.cpp
 
 HEADERS += \
     endscreen.h \
+    game.h \
     gamescreen.h \
     mainmenu.h \
-    multiplayerscreen.h
+    multiplayerscreen.h \
+    tcpclient.h \
+    tcpserver.h
 
 FORMS += \
     endscreen.ui \

@@ -21,12 +21,17 @@ public:
 private slots:
     void StartButtonClicked();
     void SetEndScreenWidget(int);
+    void SetMultiPlayerEndScreenWidget(int, bool);
+    void HandleReturnToLobby(int);
+
+signals:
+    void GameStarted();
+    void MultiChangeWidgetIndex(int);
 
 private:
     Ui::MainMenu *ui;
     GameScreen* GamePage = new GameScreen;
     EndScreen* EndPage = new EndScreen;
     MultiPlayerScreen* MultiPlayerPage = new MultiPlayerScreen;
-
 };
 #endif // MAINMENU_H

@@ -2,6 +2,7 @@
 #define ENDSCREEN_H
 
 #include <QWidget>
+#include <tcpclient.h>
 
 namespace Ui {
 class EndScreen;
@@ -13,8 +14,12 @@ class EndScreen : public QWidget
 
 public:
     explicit EndScreen(QWidget *parent = nullptr);
+    void MultiPlayerSetUp(int Score, bool BClient);
     void SetScore(int);
     ~EndScreen();
+
+public slots:
+    void UpdateScoreboard(int);
 
 private slots:
     void on_AgainButton_clicked();
@@ -22,11 +27,15 @@ private slots:
 
 signals:
     void MenuButtonClicked();
+    void MultiMenuButtonClicked();
     void AgainButtonClicked();
+    void MultiLobbyButtonClicked(int);
 
 
 private:
     Ui::EndScreen *ui;
+    TcpClient* tcpClient = nullptr;
+    bool IsClient;
 };
 
 #endif // ENDSCREEN_H
