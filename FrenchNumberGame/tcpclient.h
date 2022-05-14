@@ -22,6 +22,7 @@ signals:
 
 public slots:
     void RequestNewAnswer(QString);
+    void CloseClient();
 
 private slots:
     void ClientConnected();

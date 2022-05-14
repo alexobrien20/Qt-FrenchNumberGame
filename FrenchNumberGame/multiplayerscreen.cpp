@@ -1,4 +1,4 @@
-#include "multiplayerscreen.h"
+ #include "multiplayerscreen.h"
 #include "ui_multiplayerscreen.h"
 
 MultiPlayerScreen::MultiPlayerScreen(QWidget *parent) :
@@ -22,16 +22,27 @@ MultiPlayerScreen::MultiPlayerScreen(QWidget *parent) :
 
 void MultiPlayerScreen::ChangeWidgetIndex(int Index)
 {
-   // Only change to lobby / Play again if the server is still open!
-    if(tcpClient && tcpClient->GetState() == QAbstractSocket::ConnectedState)
+    // Changes the widget depending on if the socket is open
+    // End screen -> lobby only if the server is still open.
+    if(!tcpClient.isNull())
     {
         ui->stackedWidget->setCurrentIndex(Index);
     }
-    else if(tcpServer)
+    else if(!tcpServer.isNull())
     {
+        // If going to lobby then we need to delete the old game.
+        if(Index == 1)
+        {
+            game->deleteLater();
+        }
+        // If we are playing again then a signal needs to be outputted to remove the old scores.
+        else if(Index == 4)
+        {
+            emit GamePlayAgainReset();
+        }
         ui->stackedWidget->setCurrentIndex(Index);
     }
-    // If not connected then send them back to multiplayer main page
+    // If no socket then there must be no game open.
     else
     {
         ui->stackedWidget->setCurrentIndex(0);
@@ -40,13 +51,24 @@ void MultiPlayerScreen::ChangeWidgetIndex(int Index)
 
 void MultiPlayerScreen::DisconnectSocket()
 {
-    if(tcpServer)
+    // Called when you exit the game but don't actually close the application.
+//    if(!ServerPtr.isNull())
+//    {
+//        tcpServer->deleteLater();
+//        game->deleteLater();
+//    }
+//    else if(!ClientPtr.isNull())
+//    {
+//        tcpClient->deleteLater();
+//    }
+    if(!tcpServer.isNull())
     {
-        emit CloseServer();
+        tcpServer->deleteLater();
+        game->deleteLater();
     }
-    else if(tcpClient)
+    else if(!tcpClient.isNull())
     {
-
+        tcpClient->deleteLater();
     }
 }
 
@@ -54,7 +76,8 @@ void MultiPlayerScreen::StartServerButtonClicked()
 {
     // Check this for conversion + input validation
     // What if this errors?
-    tcpServer = new TcpServer(QHostAddress::Any, 35571, this);
+    TcpServer* tcpServerSocket = new TcpServer(QHostAddress::Any, 35571, this);
+    tcpServer = tcpServerSocket;
     connect(this, &MultiPlayerScreen::CloseServer, tcpServer, &TcpServer::CloseServer);
     ui->stackedWidget->setCurrentIndex(1);
     ServerHostB = true;
@@ -65,21 +88,23 @@ void MultiPlayerScreen::JoinServerButtonClicked()
     QString ServerIP = ui->HostInput->text();
     int ServerPort = ui->PortInput->text().toInt();
     // Add validators for this!
-    tcpClient = new TcpClient(this);
+//    tcpClient = new TcpClient(this);
+//    QPointer<TcpClient> ClientPtr(tcpClient);
+    tcpClient = new TcpClient;
     connect(tcpClient, &TcpClient::ClientErrorSignal, this, &MultiPlayerScreen::DisplayError);
     connect(tcpClient, &TcpClient::ClientConnectedSignal, this, &MultiPlayerScreen::ClientConnected);
     connect(tcpClient, &TcpClient::GameStarted, this, &MultiPlayerScreen::SetUpGameScreen);
     connect(tcpClient, &TcpClient::GameUpdated, this, &MultiPlayerScreen::GameUpdated);
     connect(tcpClient, &TcpClient::GameEnded, this, [this](int Score, bool BClient){emit GameEnded(Score, BClient);});
     connect(tcpClient, &TcpClient::GameScoreUpdate, [this](int Score){emit GameScoreUpdated(Score);});
-    connect(tcpClient, &TcpClient::ClientDisconnected, [this](){this->ui->stackedWidget->setCurrentIndex(0);});
+    connect(tcpClient, &TcpClient::ClientDisconnected, this, [this](){this->ui->stackedWidget->setCurrentIndex(0); tcpClient->deleteLater();});
     connect(this, &MultiPlayerScreen::ClientSendAnswer, tcpClient, &TcpClient::RequestNewAnswer);
+    connect(this, &MultiPlayerScreen::CloseClient, tcpClient, &TcpClient::CloseClient);
     tcpClient->ConnectToServer(QHostAddress::Any, 35571);
 }
 
 void MultiPlayerScreen::GameUpdated(QString question)
 {
-    qDebug() << "Changing label to " << question;
     ui->WordLabel->setText(question);
 }
 
@@ -99,6 +124,7 @@ void MultiPlayerScreen::EnterButtonClicked()
         QString CurrentNumber = game->CheckServerAnswer(UserAnswer);
         if(CurrentNumber.isEmpty())
         {
+            ui->UserInput->setText("");
             return;
         }
         ui->WordLabel->setText(CurrentNumber);
@@ -154,12 +180,14 @@ void MultiPlayerScreen::StartGameButtonClicked()
     {
         ui->ErrorLabel->setText(tr("Lowest must be greater than zero!"));
     }
+    // Check about deleting this variablwe
     game = new Game(tcpServer, this);
     game->StartGame(Lowest, Highest, Amount);
     ui->stackedWidget->setCurrentIndex(3);
     ui->WordLabel->setText(game->GetCurrentNumber());
     connect(game, &Game::GameEnded, this, [this](int Score, bool BClient){emit GameEnded(Score, BClient);});
     connect(game, &Game::GameScoreUpdate, this, [this](int Score){emit GameScoreUpdated(Score);});
+    connect(this, &MultiPlayerScreen::GamePlayAgainReset, game, &Game::ResetGame);
 }
 
 void MultiPlayerScreen::DisplayError(QString SocketError)

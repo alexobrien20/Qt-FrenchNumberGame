@@ -11,6 +11,7 @@ Game::Game(TcpServer* TCPSERVER, QObject *parent)
     if(tcpServer)
     {
         connect(tcpServer, &TcpServer::ClientAnswerRecieved, this, &Game::CheckClientAnswer);
+        connect(tcpServer, &TcpServer::HandleClientDisconnect, this, &Game::HandleClientDisconnect);
         connect(this, &Game::ClientGameUpdate, tcpServer, &TcpServer::MessageClient);
     }
 }
@@ -19,6 +20,25 @@ Game::Game(QString Question, QString Answer)
     : SingleAnswer{Answer}, SingleQuestion{Question}
 {
     // Replace this with a TcpServer version of the constructor.
+}
+
+void Game::ResetGame()
+{
+    // Resets the client scores/counts to 0
+    for(auto const& key : ClientScores.keys())
+    {
+        ClientScores[key]["Counter"] = 0;
+        ClientScores[key]["Score"] = 0;
+    }
+    GenerateNumbers();
+    Score = 0;
+    GameFinished = false;
+}
+
+void Game::HandleClientDisconnect(int ClientId)
+{
+    // If a client has left then remove them from the scores hashMap
+    ClientScores.remove(ClientId);
 }
 
 QString Game::CheckServerAnswer(QString answer)
@@ -133,14 +153,13 @@ void Game::LoadFrenchNumbers()
     }
 }
 
-void Game::StartGame(uint Lowest, uint Highest, int Amount)
+void Game::GenerateNumbers()
 {
-    AmountOfNumbers = Amount;
     FrenchNumbers.clear();
     EnglishNumbers.clear();
-    for(int i = 0; i < Amount; i++)
+    for(int i = 0; i < AmountOfNumbers; i++)
     {
-        quint32 RandomNumber= QRandomGenerator64::global()->bounded(Lowest, Highest);
+        quint32 RandomNumber= QRandomGenerator64::global()->bounded(LowestNumber, HighestNumber);
         QString FrenchWord = NumberToFrench(RandomNumber);
         QString EnglishWord = NumberToEnglish(RandomNumber);
         FrenchNumbers.push_back(FrenchWord);
@@ -148,7 +167,14 @@ void Game::StartGame(uint Lowest, uint Highest, int Amount)
     }
     CurrentNumber = EnglishNumbers.begin();
     CurrentAnswer = FrenchNumbers.begin();
+}
 
+void Game::StartGame(uint Lowest, uint Highest, int Amount)
+{
+    AmountOfNumbers = Amount;
+    HighestNumber = Highest;
+    LowestNumber= Lowest;
+    GenerateNumbers();
     // If the a server then send to people that it's started.
     if(tcpServer)
     {

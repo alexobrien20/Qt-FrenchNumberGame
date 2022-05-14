@@ -23,7 +23,6 @@ TcpServer::TcpServer(const QHostAddress Hostname, int PortNumber, QObject *paren
 
 void TcpServer::MessageClient(ServerMessageTypes MessageType, int ClientId, QString newQuestion = "")
 {
-    qDebug() << "Sending " <<  newQuestion;
     QTcpSocket* ClientSocket = ClientIndex[ClientId];
     QJsonObject object
     {
@@ -89,13 +88,24 @@ void TcpServer::ReadMessage()
 
 void TcpServer::ClientConnected()
 {
-    qDebug() << "New Client has joined!";
     QTcpSocket* clientSocket = tcpServer->nextPendingConnection();
     connect(clientSocket, &QIODevice::readyRead, this, &TcpServer::ReadMessage);
+    connect(clientSocket, &QTcpSocket::disconnected, this, &TcpServer::HandleDisconnect);
     Connections.push_back(clientSocket);
     ClientIds.insert(clientSocket, UserCount);
     ClientIndex.insert(UserCount, clientSocket);
     UserCount++;
+    qDebug() << "New Client has joined! There are now " << ClientIds.size() << " clients";
+}
+
+void TcpServer::HandleDisconnect()
+{
+    QTcpSocket* ClientSocket = qobject_cast<QTcpSocket*>(sender());
+    int ClientId = ClientIds[ClientSocket];
+    emit HandleClientDisconnect(ClientId);
+    qDebug() << "Removing client with Id " << ClientId;
+    ClientIds.remove(ClientSocket);
+    ClientIndex.remove(ClientId);
 }
 
 void TcpServer::MessageAll(ServerMessageTypes updateType, QString question)

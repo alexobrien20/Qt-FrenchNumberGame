@@ -30,6 +30,7 @@ signals:
     void MultiMenuButtonClicked();
     void AgainButtonClicked();
     void MultiLobbyButtonClicked(int);
+    void MultiPlayAgainClicked();
 
 
 private:

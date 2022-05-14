@@ -25,6 +25,7 @@ public:
 signals:
     void ClientAnswerRecieved(QString, int);
     void ClientSkipRecieved(int);
+    void HandleClientDisconnect(int);
 
 public slots:
     void CloseServer();
@@ -34,6 +35,7 @@ public slots:
 private slots:
     void ClientConnected();
     void ReadMessage();
+    void HandleDisconnect();
 
 private:
     QTcpServer* tcpServer = nullptr;

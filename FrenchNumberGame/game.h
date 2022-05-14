@@ -20,10 +20,12 @@ public:
     int Score = 0;
     QString CheckServerAnswer(QString);
     void SkipClientAnswer(int);
+    void ResetGame();
 
 private slots:
     void ClientUpdate(QString);
     void CheckClientAnswer(QString, int);
+    void HandleClientDisconnect(int);
 
 signals:
     void ClientUpdated(QString);
@@ -34,10 +36,10 @@ signals:
 private:
     TcpServer* tcpServer = nullptr;
     TcpClient* tcpClient = nullptr;
-    // ClientId : {Score, Count}
     // ClientId : {"Score : ""}, {"Counter : ""}}
     QHash<int, QHash<QString, int>> ClientScores;
     void LoadFrenchNumbers();
+    void GenerateNumbers();
     QString NumberToFrench(uint);
     QString NumberToEnglish(uint);
     QVector<QString> FrenchNumbersInput;
@@ -48,6 +50,8 @@ private:
     QString SingleAnswer;
     QString SingleQuestion;
     int AmountOfNumbers;
+    uint LowestNumber;
+    uint HighestNumber;
     bool GameFinished;
 };
 

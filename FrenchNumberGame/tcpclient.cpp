@@ -21,6 +21,7 @@ TcpClient::TcpClient(QObject *parent)
     tcpSocket = new QTcpSocket(this);
     in.setDevice(tcpSocket);
     in.setVersion(QDataStream::Qt_6_2);
+    qDebug() << "TcpSocket created!";
 
     connect(tcpSocket, &QAbstractSocket::errorOccurred, this, &TcpClient::HandleError);
     connect(tcpSocket, &QAbstractSocket::connected, this, &TcpClient::ClientConnected);
@@ -101,8 +102,9 @@ void TcpClient::ConnectToServer(const QHostAddress HostIp, int Port)
 
 void TcpClient::HandleDisconnect()
 {
-    qDebug() << "You were disconnected from the server!";
     tcpSocket->deleteLater();
+    qDebug() << "You were disconnected from the server!";
+//    tcpSocket->state();
     emit ClientDisconnected();
 }
 
@@ -130,7 +132,15 @@ void TcpClient::HandleError(QAbstractSocket::SocketError SocketError)
 
 QAbstractSocket::SocketState TcpClient::GetState()
 {
-    if(tcpSocket)
-         return tcpSocket->state();
-    return QAbstractSocket::UnconnectedState;
+    qDebug() << "This ran";
+    qDebug() << tcpSocket->state();
+    if(tcpSocket == nullptr)
+        return QAbstractSocket::UnconnectedState;
+    return tcpSocket->state();
+}
+
+void TcpClient::CloseClient()
+{
+    if(tcpSocket->state() == QAbstractSocket::ConnectedState)
+        tcpSocket->deleteLater();
 }

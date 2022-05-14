@@ -8,6 +8,7 @@
 #include <tcpclient.h>
 #include <game.h>
 #include <endscreen.h>
+#include <QPointer>
 
 namespace Ui {
 class MultiPlayerScreen;
@@ -32,6 +33,8 @@ signals:
     void ClientSendAnswer(QString);
     void GameScoreUpdated(int);
     void CloseServer();
+    void CloseClient();
+    void GamePlayAgainReset();
 
 private slots:
     void StartServerButtonClicked();
@@ -48,8 +51,12 @@ private slots:
 
 private:
     Ui::MultiPlayerScreen *ui;
-    TcpServer* tcpServer = nullptr;
-    TcpClient* tcpClient = nullptr;
+//    TcpServer* tcpServer = nullptr;
+//    TcpClient* tcpClient = nullptr;
+//    QPointer<TcpClient> ClientPtr;
+//    QPointer<TcpServer> ServerPtr;
+    QPointer<TcpClient> tcpClient;
+    QPointer<TcpServer> tcpServer;
     Game* game = nullptr;
     bool ServerHostB = false;
 };

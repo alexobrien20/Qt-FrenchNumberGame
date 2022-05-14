@@ -20,20 +20,23 @@ MainMenu::MainMenu(QWidget *parent)
     ui->stackedWidget->addWidget(GamePage);
     ui->stackedWidget->addWidget(EndPage);
     ui->stackedWidget->addWidget(MultiPlayerPage);
+    connect(this, &MainMenu::MultiChangeWidgetIndex, MultiPlayerPage, &MultiPlayerScreen::ChangeWidgetIndex);
     connect(ui->StartButton, &QPushButton::clicked, this, &MainMenu::StartButtonClicked);
     connect(GamePage, &GameScreen::GameOverSignal, this, &MainMenu::SetEndScreenWidget);
     connect(EndPage, &EndScreen::AgainButtonClicked, this, &MainMenu::StartButtonClicked);
     connect(EndPage, &EndScreen::MenuButtonClicked, this, [=](){this->ui->stackedWidget->setCurrentWidget(MainScreenPage);});
     connect(EndPage, &EndScreen::MultiMenuButtonClicked, MultiPlayerPage, &MultiPlayerScreen::DisconnectSocket);
     connect(EndPage, &EndScreen::MultiLobbyButtonClicked, this, &MainMenu::HandleReturnToLobby);
+    connect(EndPage, &EndScreen::MultiPlayAgainClicked, this, [=](){HandleReturnToLobby(4);});
     connect(MultiPlayerPage, &MultiPlayerScreen::MenuButtonClickedSignal, this, [=](){this->ui->stackedWidget->setCurrentWidget(MainScreenPage);});
     connect(MultiPlayerPage, &MultiPlayerScreen::GameEnded, this, &MainMenu::SetMultiPlayerEndScreenWidget);
     connect(MultiPlayerPage, &MultiPlayerScreen::GameScoreUpdated, EndPage, &EndScreen::UpdateScoreboard);
     connect(ui->SinglePlayerButton, &QPushButton::clicked, this, [=](){this->ui->stackedWidget->setCurrentWidget(GameSettingsPage);});
-    connect(ui->MultiPlayerButton, &QPushButton::clicked, this, [=](){this->ui->stackedWidget->setCurrentWidget(MultiPlayerPage);});
+    connect(ui->MultiPlayerButton, &QPushButton::clicked, this, [=](){
+        this->ui->stackedWidget->setCurrentWidget(MultiPlayerPage);
+        emit MultiChangeWidgetIndex(0);});
     connect(ui->MainMenuButton, &QPushButton::clicked, this, [=](){this->ui->stackedWidget->setCurrentWidget(MainScreenPage);});
     connect(ui->SingleMenuButton, &QPushButton::clicked, this, [=](){this->ui->stackedWidget->setCurrentWidget(MainScreenPage);});
-    connect(this, &MainMenu::MultiChangeWidgetIndex, MultiPlayerPage, &MultiPlayerScreen::ChangeWidgetIndex);
 }
 
 void MainMenu::StartButtonClicked()

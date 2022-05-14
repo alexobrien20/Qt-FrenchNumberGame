@@ -12,12 +12,17 @@ EndScreen::EndScreen(QWidget *parent) :
     connect(ui->MultiMenuButton, &QPushButton::clicked, this, [=](){
         emit MultiMenuButtonClicked();
         emit MenuButtonClicked();
-        ui->Scoreboard->clearContents();});
+        ui->Scoreboard->setRowCount(0);;});
 
     connect(ui->MultiLobbyButton, &QPushButton::clicked, this, [=](){
+        // Needs to delete tcpClient if client.
         int index = IsClient ? 2 : 1;
         emit MultiLobbyButtonClicked(index);
-        ui->Scoreboard->clearContents();});
+        ui->Scoreboard->setRowCount(0);;});
+
+    connect(ui->MultiAgainButton, &QPushButton::clicked, this, [=](){
+        emit MultiPlayAgainClicked();
+        ui->Scoreboard->setRowCount(0);;});
 }
 
 void EndScreen::SetScore(int Score)
