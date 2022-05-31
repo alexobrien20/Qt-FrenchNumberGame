@@ -10,9 +10,11 @@ Game::Game(TcpServer* TCPSERVER, QObject *parent)
     LoadFrenchNumbers();
     if(tcpServer)
     {
+        connect(tcpServer, &TcpServer::ClientUsernameRecieved, this, &Game::AddClient);
         connect(tcpServer, &TcpServer::ClientAnswerRecieved, this, &Game::CheckClientAnswer);
         connect(tcpServer, &TcpServer::HandleClientDisconnect, this, &Game::HandleClientDisconnect);
         connect(this, &Game::ClientGameUpdate, tcpServer, &TcpServer::MessageClient);
+        connect(this, &Game::GameScoreUpdate, tcpServer, &TcpServer::GetClientUsername);
     }
 }
 
@@ -20,6 +22,14 @@ Game::Game(QString Question, QString Answer)
     : SingleAnswer{Answer}, SingleQuestion{Question}
 {
     // Replace this with a TcpServer version of the constructor.
+}
+
+void Game::AddClient(QString ClientUsername, int ClientId)
+{
+    QHash<QString, int> DefaultValues;
+    DefaultValues["Score"] = 0;
+    DefaultValues["Counter"] = 0;
+    ClientScores.insert(ClientId, DefaultValues);
 }
 
 void Game::ResetGame()
@@ -39,6 +49,7 @@ void Game::HandleClientDisconnect(int ClientId)
 {
     // If a client has left then remove them from the scores hashMap
     ClientScores.remove(ClientId);
+    ClientUsersnames.remove(ClientId);
 }
 
 QString Game::CheckServerAnswer(QString answer)
@@ -55,7 +66,7 @@ QString Game::CheckServerAnswer(QString answer)
             if(ClientScores[key]["Counter"] == AmountOfNumbers - 1)
             {
                 emit ClientGameUpdate(ServerMessageTypes::GameScoreUpdate, key, ServerScore);
-                emit GameScoreUpdate(ClientScores[key]["Score"]);
+                emit GameScoreUpdate(ClientScores[key]["Score"], key);
             }
         }
         GameFinished = true;
@@ -68,16 +79,6 @@ QString Game::CheckServerAnswer(QString answer)
 
 void Game::CheckClientAnswer(QString answer, int ClientId)
 {
-    //If the Client doesn't already exist then add him to the hash
-    if(ClientScores.find(ClientId) == ClientScores.end())
-    {
-        QHash<QString, int> DefaultValues;
-        DefaultValues["Score"] = 0;
-        DefaultValues["Counter"] = 0;
-        ClientScores.insert(ClientId, DefaultValues);
-    }
-    //Otherwise update the score and counter
-
     // 1) Check the answer
     // 2) Increment score
     int CurrentPosition = ClientScores[ClientId]["Counter"];
@@ -105,8 +106,8 @@ void Game::CheckClientAnswer(QString answer, int ClientId)
             {
                 qDebug() << "This happened!";
                 QString OtherClientScore = QString::number(ClientScores[key]["Score"]);
-                emit ClientGameUpdate(ServerMessageTypes::GameScoreUpdate, ClientId, OtherClientScore);
-                emit ClientGameUpdate(ServerMessageTypes::GameScoreUpdate, key, ClientScore);
+                emit ClientGameUpdate(ServerMessageTypes::GameScoreUpdate, ClientId, OtherClientScore, key);
+                emit ClientGameUpdate(ServerMessageTypes::GameScoreUpdate, key, ClientScore, ClientId);
             }
 
             // If the game is finished then send the client score as well
@@ -115,8 +116,8 @@ void Game::CheckClientAnswer(QString answer, int ClientId)
         if(GameFinished)
         {
             QString ServerScore = QString::number(Score);
-            emit ClientGameUpdate(ServerMessageTypes::GameScoreUpdate, ClientId, ServerScore);
-            emit GameScoreUpdate(ClientScores[ClientId]["Score"]);
+            emit ClientGameUpdate(ServerMessageTypes::GameScoreUpdate, ClientId, ServerScore, 0);
+            emit GameScoreUpdate(ClientScores[ClientId]["Score"], ClientId);
         }
 
         return;

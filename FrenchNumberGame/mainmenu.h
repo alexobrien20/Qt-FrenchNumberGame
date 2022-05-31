@@ -21,7 +21,7 @@ public:
 private slots:
     void StartButtonClicked();
     void SetEndScreenWidget(int);
-    void SetMultiPlayerEndScreenWidget(int, bool);
+    void SetMultiPlayerEndScreenWidget(int, bool, QString);
     void HandleReturnToLobby(int);
 
 signals:

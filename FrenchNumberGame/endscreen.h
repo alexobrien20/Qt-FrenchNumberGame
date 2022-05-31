@@ -14,12 +14,12 @@ class EndScreen : public QWidget
 
 public:
     explicit EndScreen(QWidget *parent = nullptr);
-    void MultiPlayerSetUp(int Score, bool BClient);
+    void MultiPlayerSetUp(int, bool, QString);
     void SetScore(int);
     ~EndScreen();
 
 public slots:
-    void UpdateScoreboard(int);
+    void UpdateScoreboard(int, QString);
 
 private slots:
     void on_AgainButton_clicked();

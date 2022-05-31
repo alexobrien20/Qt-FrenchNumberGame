@@ -29,15 +29,17 @@ public slots:
 signals:
     void MenuButtonClickedSignal();
     void GameStarted(QString);
-    void GameEnded(int, bool);
+    void GameEnded(int, bool, QString);
     void ClientSendAnswer(QString);
-    void GameScoreUpdated(int);
+    void GameScoreUpdated(int, QString);
     void CloseServer();
     void CloseClient();
     void GamePlayAgainReset();
+    void ClientSendUsername(QString);
+    void UserReady();
 
 private slots:
-    void StartServerButtonClicked();
+//    void StartServerButtonClicked();
     void JoinServerButtonClicked();
     void MenuButtonClicked();
     void ClientConnected();
@@ -48,8 +50,16 @@ private slots:
     void SkipButtonClicked();
     void ClearButtonClicked();
     void EnterButtonClicked();
+    void UsernameEnterButtonClicked();
+    void UpdateServerUserTable(QString);
+    void UpdateUserTable(QString, bool, bool);
+    void HandleClientDisconnect();
+    void ReadyButtonClicked();
+    void UpdateServerState(QString);
+    void UpdateClientState(QString);
 
 private:
+    int FindUsernameRow(QString);
     Ui::MultiPlayerScreen *ui;
 //    TcpServer* tcpServer = nullptr;
 //    TcpClient* tcpClient = nullptr;
@@ -59,6 +69,7 @@ private:
     QPointer<TcpServer> tcpServer;
     Game* game = nullptr;
     bool ServerHostB = false;
+    QString Username;
 };
 
 #endif // MULTIPLAYERSCREEN_H

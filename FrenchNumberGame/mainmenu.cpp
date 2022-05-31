@@ -27,7 +27,7 @@ MainMenu::MainMenu(QWidget *parent)
     connect(EndPage, &EndScreen::MenuButtonClicked, this, [=](){this->ui->stackedWidget->setCurrentWidget(MainScreenPage);});
     connect(EndPage, &EndScreen::MultiMenuButtonClicked, MultiPlayerPage, &MultiPlayerScreen::DisconnectSocket);
     connect(EndPage, &EndScreen::MultiLobbyButtonClicked, this, &MainMenu::HandleReturnToLobby);
-    connect(EndPage, &EndScreen::MultiPlayAgainClicked, this, [=](){HandleReturnToLobby(4);});
+    connect(EndPage, &EndScreen::MultiPlayAgainClicked, this, [=](){HandleReturnToLobby(3);});
     connect(MultiPlayerPage, &MultiPlayerScreen::MenuButtonClickedSignal, this, [=](){this->ui->stackedWidget->setCurrentWidget(MainScreenPage);});
     connect(MultiPlayerPage, &MultiPlayerScreen::GameEnded, this, &MainMenu::SetMultiPlayerEndScreenWidget);
     connect(MultiPlayerPage, &MultiPlayerScreen::GameScoreUpdated, EndPage, &EndScreen::UpdateScoreboard);
@@ -62,10 +62,10 @@ void MainMenu::SetEndScreenWidget(int Score)
     ui->stackedWidget->setCurrentWidget(EndPage);
 }
 
-void MainMenu::SetMultiPlayerEndScreenWidget(int Score, bool BClient)
+void MainMenu::SetMultiPlayerEndScreenWidget(int Score, bool BClient, QString Username)
 {
     ui->stackedWidget->setCurrentWidget(EndPage);
-    EndPage->MultiPlayerSetUp(Score, BClient);
+    EndPage->MultiPlayerSetUp(Score, BClient, Username);
 }
 
 

@@ -21,23 +21,26 @@ public:
     QString CheckServerAnswer(QString);
     void SkipClientAnswer(int);
     void ResetGame();
+    void SetGameUsername(QString);
 
 private slots:
+    void AddClient(QString, int);
     void ClientUpdate(QString);
     void CheckClientAnswer(QString, int);
     void HandleClientDisconnect(int);
 
 signals:
     void ClientUpdated(QString);
-    void ClientGameUpdate(ServerMessageTypes, int, QString = "");
+    void ClientGameUpdate(ServerMessageTypes, int, QString, int=0);
     void GameEnded(int, bool);
-    void GameScoreUpdate(int);
+    void GameScoreUpdate(int, int);
 
 private:
     TcpServer* tcpServer = nullptr;
     TcpClient* tcpClient = nullptr;
     // ClientId : {"Score : ""}, {"Counter : ""}}
     QHash<int, QHash<QString, int>> ClientScores;
+    QHash<int, QString> ClientUsersnames;
     void LoadFrenchNumbers();
     void GenerateNumbers();
     QString NumberToFrench(uint);

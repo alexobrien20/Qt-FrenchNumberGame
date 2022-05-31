@@ -31,13 +31,13 @@ void EndScreen::SetScore(int Score)
     ui->ScoreLabel->setText(ScoreText);
 }
 
-void EndScreen::UpdateScoreboard(int Score)
+void EndScreen::UpdateScoreboard(int Score, QString Username)
 {
     qDebug() << "Another score " << Score;
     ui->Scoreboard->setSortingEnabled(false);
     int NextRow = ui->Scoreboard->rowCount();
     ui->Scoreboard->insertRow(NextRow);
-    QTableWidgetItem* IdItem = new QTableWidgetItem(tr("Not Me"));
+    QTableWidgetItem* IdItem = new QTableWidgetItem(Username);
     // Might not need to turn it off.
     QTableWidgetItem* ScoreItem = new QTableWidgetItem(QString::number(Score));
     ui->Scoreboard->setItem(NextRow,0, IdItem);
@@ -45,14 +45,14 @@ void EndScreen::UpdateScoreboard(int Score)
     ui->Scoreboard->setSortingEnabled(true);
 }
 
-void EndScreen::MultiPlayerSetUp(int Score, bool BClient)
+void EndScreen::MultiPlayerSetUp(int Score, bool BClient, QString Username)
 {
     IsClient = BClient;
     this->ui->stackedWidget->setCurrentIndex(1);
     ui->Scoreboard->setSortingEnabled(false);
     int NextRow = ui->Scoreboard->rowCount();
     ui->Scoreboard->insertRow(NextRow);
-    QTableWidgetItem* IdItem = new QTableWidgetItem(tr("Me"));
+    QTableWidgetItem* IdItem = new QTableWidgetItem(Username);
     // Might not need to turn it off.
     QTableWidgetItem* ScoreItem = new QTableWidgetItem(QString::number(Score));
     ui->Scoreboard->setItem(NextRow,0, IdItem);

@@ -10,6 +10,9 @@ enum class ServerMessageTypes
     GameEnd,
     GameUpdate,
     GameScoreUpdate,
+    GameSendUsername,
+    GameSendServerUsername,
+    GameUpdateUserStatus,
 };
 
 TcpClient::TcpClient(QObject *parent)
@@ -29,6 +32,38 @@ TcpClient::TcpClient(QObject *parent)
     connect(tcpSocket, &QAbstractSocket::disconnected, this, &TcpClient::HandleDisconnect);
     // This is deleted correctly yes?
 //    connect(tcpSocket, &QAbstractSocket::disconnected, this, [=](){ui->stackedWidget->setCurrentIndex(0);});
+}
+
+// Combine these two functions later.
+
+void TcpClient::SendUserStatus()
+{
+    QJsonObject object
+    {
+        {"MessageType", QVariant::fromValue(ServerMessageTypes::GameUpdateUserStatus).toJsonValue()},
+        {"Data", ""}
+    };
+    QJsonDocument jsonDoc{object};
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_6_2);
+    out << jsonDoc.toJson(QJsonDocument::Compact);
+    tcpSocket->write(block);
+}
+
+void TcpClient::SendUsername(QString Username)
+{
+    QJsonObject object
+    {
+        {"MessageType", QVariant::fromValue(ServerMessageTypes::GameSendUsername).toJsonValue()},
+        {"Data", Username}
+    };
+    QJsonDocument jsonDoc{object};
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_6_2);
+    out << jsonDoc.toJson(QJsonDocument::Compact);
+    tcpSocket->write(block);
 }
 
 void TcpClient::RequestNewAnswer(QString answer)
@@ -67,25 +102,45 @@ void TcpClient::MessageRecieved()
 
         if(JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameStart))
         {
-            QString question = JsonObj["Question"].toString();
+            QString question = JsonObj["Data"].toString();
             emit GameStarted(question);
         }
         else if (JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameEnd))
         {
-            int Score = JsonObj["Question"].toString().toInt();
+            int Score = JsonObj["Data"].toString().toInt();
             qDebug() << "Game End!";
             emit GameEnded(Score, true);
         }
         else if(JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameUpdate))
         {
-            QString question = JsonObj["Question"].toString();
+            QString question = JsonObj["Data"].toString();
             emit GameUpdated(question);
         }
         else if(JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameScoreUpdate))
         {
-            int Score = JsonObj["Question"].toString().toInt();
-            qDebug() << "Another player scored " << Score;
-            emit GameScoreUpdate(Score);
+            int Score = JsonObj["Score"].toString().toInt();
+            QString Username = JsonObj["Username"].toString();
+            qDebug() << "Another player scored with username " << Username << " scored" << Score;
+            emit GameScoreUpdate(Score, Username);
+        }
+        else if(JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameSendUsername))
+        {
+            QJsonObject Data = JsonObj["Data"].toObject();
+            QString Username = Data["Username"].toString();
+            bool State = Data["State"].toBool();
+            qDebug() << "New user joined with username " << Username;
+            emit NewUserJoined(Username, false, State);
+        }
+        else if(JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameSendServerUsername))
+        {
+            QString Username = JsonObj["Data"].toString();
+            qDebug() << "Server host joined with username " << Username;
+            emit NewUserJoined(Username, true, 1);
+        }
+        else if(JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameUpdateUserStatus))
+        {
+            QString Username = JsonObj["Data"].toString();
+            emit UserStateChanged(Username);
         }
     }
 }
