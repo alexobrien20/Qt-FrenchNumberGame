@@ -23,6 +23,7 @@ private slots:
     void SetEndScreenWidget(int);
     void SetMultiPlayerEndScreenWidget(int, bool, QString);
     void HandleReturnToLobby(int);
+    void CheckAndChangeWidget();
 
 signals:
     void GameStarted();

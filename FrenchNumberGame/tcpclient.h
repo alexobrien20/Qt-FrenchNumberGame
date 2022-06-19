@@ -17,16 +17,18 @@ signals:
     void GameStarted(QString);
     void GameUpdated(QString);
     void GameEnded(int, bool);
-    void GameScoreUpdate(int, QString);
+    void GameScoreUpdate(int, QString, bool);
     void ClientDisconnected();
     void NewUserJoined(QString, bool, bool);
     void UserStateChanged(QString);
+    void OtherClientDisconnected(QString);
+    void ClientScoreboardStateChanged(QString);
 
 public slots:
     void RequestNewAnswer(QString);
     void SendUsername(QString);
     void CloseClient();
-    void SendUserStatus();
+    void SendUserStatus(QString);
 
 private slots:
     void ClientConnected();

@@ -13,6 +13,7 @@ enum class ServerMessageTypes
     GameSendUsername,
     GameSendServerUsername,
     GameUpdateUserStatus,
+    GameClientDisconnect
 };
 
 TcpClient::TcpClient(QObject *parent)
@@ -36,12 +37,12 @@ TcpClient::TcpClient(QObject *parent)
 
 // Combine these two functions later.
 
-void TcpClient::SendUserStatus()
+void TcpClient::SendUserStatus(QString Table)
 {
     QJsonObject object
     {
         {"MessageType", QVariant::fromValue(ServerMessageTypes::GameUpdateUserStatus).toJsonValue()},
-        {"Data", ""}
+        {"Data", Table}
     };
     QJsonDocument jsonDoc{object};
     QByteArray block;
@@ -103,6 +104,7 @@ void TcpClient::MessageRecieved()
         if(JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameStart))
         {
             QString question = JsonObj["Data"].toString();
+            qDebug() << "Game Starting!";
             emit GameStarted(question);
         }
         else if (JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameEnd))
@@ -120,8 +122,9 @@ void TcpClient::MessageRecieved()
         {
             int Score = JsonObj["Score"].toString().toInt();
             QString Username = JsonObj["Username"].toString();
-            qDebug() << "Another player scored with username " << Username << " scored" << Score;
-            emit GameScoreUpdate(Score, Username);
+            bool State = JsonObj["State"].toBool();
+            qDebug() << "Another player scored with username " << Username << " scored" << Score << " with state " << State;
+            emit GameScoreUpdate(Score, Username, State);
         }
         else if(JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameSendUsername))
         {
@@ -139,8 +142,19 @@ void TcpClient::MessageRecieved()
         }
         else if(JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameUpdateUserStatus))
         {
+            QJsonObject Data = JsonObj["Data"].toObject();
+            QString Username = Data["Username"].toString();
+            QString Table = Data["Table"].toString();
+            qDebug() << "Table that is being changed " << Table;
+            if(Table == "Scoreboard")
+                emit ClientScoreboardStateChanged(Username);
+            else
+                emit UserStateChanged(Username);
+        }
+        else if(JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameClientDisconnect))
+        {
             QString Username = JsonObj["Data"].toString();
-            emit UserStateChanged(Username);
+            emit OtherClientDisconnected(Username);
         }
     }
 }

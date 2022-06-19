@@ -105,6 +105,11 @@
            <string>Score</string>
           </property>
          </column>
+         <column>
+          <property name="text">
+           <string>Ready</string>
+          </property>
+         </column>
         </widget>
        </item>
        <item>

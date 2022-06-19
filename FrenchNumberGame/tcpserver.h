@@ -13,6 +13,7 @@ enum class ServerMessageTypes
     GameSendUsername,
     GameSendServerUsername,
     GameUpdateUserStatus,
+    GameClientDisconnect,
 };
 
 class TcpServer : public QObject
@@ -22,6 +23,8 @@ class TcpServer : public QObject
 public:
     TcpServer(const QHostAddress HostIP, int Port, QString Username, QObject *parent = nullptr);
     void MessageAll(ServerMessageTypes, QString);
+    bool StartGame(QString);
+    bool AllPlayersReady();
     QHash<QTcpSocket*, int> ClientIds;
     QHash<int, QTcpSocket*> ClientIndex;
     QHash<int, bool> ClientStates;
@@ -31,14 +34,16 @@ signals:
     void ClientSkipRecieved(int);
     void HandleClientDisconnect(int);
     void ClientUsernameRecieved(QString, int);
-    void SendUsernameAndScore(QString, int);
+    void SendUsernameAndScore(QString, int, bool);
     void ClientStateChanged(QString);
+    void RemoveClientFromTable(QString);
+    void ClientScoreboardStateChanged(QString);
 
 public slots:
     void CloseServer();
     void MessageClient(ServerMessageTypes, int, QString, int UserId = 0);
     void SendNewQuestion(QString, int);
-    void GetClientUsername(int, int);
+    void GetClientUsername(int, int, bool);
 
 private slots:
     void ClientConnected();

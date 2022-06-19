@@ -10,8 +10,9 @@ class Game : public QObject
     Q_OBJECT
 public:
     Game(TcpServer* TCPSERVER, QObject *parent = nullptr);
-    Game(QString, QString);
+    Game(TcpServer* TCPSERVER, uint Lowest, uint Highest, int Amount, QObject *parent = nullptr);
     void StartGame(uint, uint, int);
+    void StartMultiplayerGame();
     void CheckAnswer(QString);
     void ClientCheckAnswer(QString);
     QString Increment();
@@ -33,7 +34,7 @@ signals:
     void ClientUpdated(QString);
     void ClientGameUpdate(ServerMessageTypes, int, QString, int=0);
     void GameEnded(int, bool);
-    void GameScoreUpdate(int, int);
+    void GameScoreUpdate(int, int, bool);
 
 private:
     TcpServer* tcpServer = nullptr;

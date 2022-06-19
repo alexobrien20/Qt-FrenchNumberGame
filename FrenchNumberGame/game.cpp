@@ -18,10 +18,16 @@ Game::Game(TcpServer* TCPSERVER, QObject *parent)
     }
 }
 
-Game::Game(QString Question, QString Answer)
-    : SingleAnswer{Answer}, SingleQuestion{Question}
+Game::Game(TcpServer* TCPSERVER, uint Lowest, uint Highest, int Amount, QObject *parent)
+    : QObject(parent), tcpServer(TCPSERVER), AmountOfNumbers(Amount),
+      LowestNumber(Lowest), HighestNumber(Highest), GameFinished(false)
 {
-    // Replace this with a TcpServer version of the constructor.
+    LoadFrenchNumbers();
+    connect(tcpServer, &TcpServer::ClientUsernameRecieved, this, &Game::AddClient);
+    connect(tcpServer, &TcpServer::ClientAnswerRecieved, this, &Game::CheckClientAnswer);
+    connect(tcpServer, &TcpServer::HandleClientDisconnect, this, &Game::HandleClientDisconnect);
+    connect(this, &Game::ClientGameUpdate, tcpServer, &TcpServer::MessageClient);
+    connect(this, &Game::GameScoreUpdate, tcpServer, &TcpServer::GetClientUsername);
 }
 
 void Game::AddClient(QString ClientUsername, int ClientId)
@@ -66,7 +72,7 @@ QString Game::CheckServerAnswer(QString answer)
             if(ClientScores[key]["Counter"] == AmountOfNumbers - 1)
             {
                 emit ClientGameUpdate(ServerMessageTypes::GameScoreUpdate, key, ServerScore);
-                emit GameScoreUpdate(ClientScores[key]["Score"], key);
+                emit GameScoreUpdate(ClientScores[key]["Score"], key, true);
             }
         }
         GameFinished = true;
@@ -79,6 +85,7 @@ QString Game::CheckServerAnswer(QString answer)
 
 void Game::CheckClientAnswer(QString answer, int ClientId)
 {
+    qDebug() << "Check score is being called for client " << ClientId;
     // 1) Check the answer
     // 2) Increment score
     int CurrentPosition = ClientScores[ClientId]["Counter"];
@@ -93,6 +100,7 @@ void Game::CheckClientAnswer(QString answer, int ClientId)
 
     if(CurrentPosition == AmountOfNumbers - 1)
     {
+        qDebug() << "This happened innside of checm answer!";
         // Emit some sort of game over signal
         // Then exit game loop
         QString ClientScore = QString::number(ClientScores[ClientId]["Score"]);
@@ -117,7 +125,7 @@ void Game::CheckClientAnswer(QString answer, int ClientId)
         {
             QString ServerScore = QString::number(Score);
             emit ClientGameUpdate(ServerMessageTypes::GameScoreUpdate, ClientId, ServerScore, 0);
-            emit GameScoreUpdate(ClientScores[ClientId]["Score"], ClientId);
+            emit GameScoreUpdate(ClientScores[ClientId]["Score"], ClientId, false);
         }
 
         return;
@@ -176,11 +184,23 @@ void Game::StartGame(uint Lowest, uint Highest, int Amount)
     HighestNumber = Highest;
     LowestNumber= Lowest;
     GenerateNumbers();
-    // If the a server then send to people that it's started.
-    if(tcpServer)
+}
+
+void  Game::StartMultiplayerGame()
+{
+    // Look at the reset game function.
+    GenerateNumbers();
+    for(auto& key : ClientScores.keys())
     {
-        tcpServer->MessageAll(ServerMessageTypes::GameStart, *CurrentNumber);
+        ClientScores[key]["Score"] = 0;
+        ClientScores[key]["Counter"] = 0;
     }
+    Score = 0;
+    GameFinished = false;
+    // Change this to a signal!
+//  emit GameStarted(*CurrentNumber);
+    qDebug() << "The first number is " << *CurrentNumber;
+    tcpServer->MessageAll(ServerMessageTypes::GameStart, *CurrentNumber);
 }
 
 void Game::SetQuestionAndAnswer(QString answer, QString question)
@@ -200,6 +220,7 @@ void Game::ClientCheckAnswer(QString UserAnswer)
         Score++;
     qDebug() << "Client score" << Score;
 }
+
 void Game::CheckAnswer(QString UserAnswer)
 {
     if(UserAnswer == *CurrentAnswer)

@@ -63,20 +63,22 @@ void TcpServer::MessageClientData(ServerMessageTypes MessageType, QJsonObject Da
 QJsonObject TcpServer::CreateUsernameScoreJsonObject(QString Score, int ClientId, int UserId)
 {
     QString ClientUsername = ClientUsernames.find(UserId) == ClientUsernames.end() ? ServerUsername : ClientUsernames[UserId];
+    bool ClientState = UserId == 0 ? true : false;
     QJsonObject DataToSend
     {
         {"MessageType", QVariant::fromValue(ServerMessageTypes::GameScoreUpdate).toJsonValue()},
         {"Score", Score},
-        {"Username", ClientUsername}
+        {"Username", ClientUsername},
+        {"State", ClientState}
     };
     qDebug() << "User : " << ClientUsername << " scored : " << Score;
     return DataToSend;
 }
 
-void TcpServer::GetClientUsername(int Score, int ClientId)
+void TcpServer::GetClientUsername(int Score, int ClientId, bool State)
 {
     QString Username = ClientUsernames[ClientId];
-    emit SendUsernameAndScore(Username, Score);
+    emit SendUsernameAndScore(Username, Score, State);
 }
 
 void TcpServer::SendNewQuestion(QString newQuestion, int ClientId)
@@ -123,6 +125,7 @@ void TcpServer::ReadMessage()
         {
             QString userAnswer = JsonObj["Answer"].toString();
             int ClientId = ClientIds[clientSocket];
+            qDebug() << "Answer recieved from client " << userAnswer;
             emit ClientAnswerRecieved(userAnswer, ClientId);
         }
         else if(JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameUpdateUserStatus))
@@ -130,10 +133,21 @@ void TcpServer::ReadMessage()
             int ClientId = ClientIds[clientSocket];
             ClientStates[ClientId] = !ClientStates[ClientId];
             QString Username = ClientUsernames[ClientId];
+            QString Table = JsonObj["Data"].toString();
             qDebug() << "User : " << Username << " now has state : " << ClientStates[ClientId];
             // Msg the new State to all clients so it appears correctly on their screen
-            MessageOtherClients(ServerMessageTypes::GameUpdateUserStatus, Username, ClientId);
-            emit ClientStateChanged(Username);
+            QJsonObject Data
+            {
+                {"Username", Username},
+                {"Table",  Table},
+            };
+            MessageOtherClientsData(ServerMessageTypes::GameUpdateUserStatus, Data, ClientId);
+//            MessageOtherClients(ServerMessageTypes::GameUpdateUserStatus, Username, ClientId);
+            qDebug() << "Table that changed " << Table;
+            if(Table == "Scoreboard")
+                emit ClientScoreboardStateChanged(Username);
+            else
+                emit ClientStateChanged(Username);
         }
         else if(JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameSendUsername))
         {
@@ -183,10 +197,15 @@ void TcpServer::ClientConnected()
 
 void TcpServer::HandleDisconnect()
 {
+    // Called when a client disconnects
+    // Remove the client from each QHash
+    // Remove that individual client from each persons UserTable
     QTcpSocket* ClientSocket = qobject_cast<QTcpSocket*>(sender());
     int ClientId = ClientIds[ClientSocket];
     emit HandleClientDisconnect(ClientId);
+    emit RemoveClientFromTable(ClientUsernames[ClientId]);
     qDebug() << "Removing client with Id " << ClientId;
+    MessageOtherClients(ServerMessageTypes::GameClientDisconnect, ClientUsernames[ClientId], ClientId);
     ClientIds.remove(ClientSocket);
     ClientIndex.remove(ClientId);
     ClientUsernames.remove(ClientId);
@@ -252,6 +271,30 @@ void TcpServer::MessageAll(ServerMessageTypes updateType, QString question)
         connection->write(block);
     }
 }
+
+bool TcpServer::AllPlayersReady()
+{
+    for(auto value : ClientStates.values())
+    {
+        if(value != true)
+            return false;
+    }
+    std::fill(ClientStates.begin(), ClientStates.end(), false);
+    return true;
+}
+
+bool TcpServer::StartGame(QString Question)
+{
+    // Check if all players are ready
+    for(auto value : ClientStates.values())
+    {
+        if(value != true)
+            return false;
+    }
+    MessageAll(ServerMessageTypes::GameStart, Question);
+    return true;
+}
+
 
 void TcpServer::CloseServer()
 {

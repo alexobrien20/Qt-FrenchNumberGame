@@ -19,11 +19,14 @@ public:
     ~EndScreen();
 
 public slots:
-    void UpdateScoreboard(int, QString);
+    void UpdateScoreboard(int, QString, bool);
+    void UpdateScoreboardState(QString);
+    void NotAllPlayersReady();
 
 private slots:
     void on_AgainButton_clicked();
     void on_MenuButton_clicked();
+    void HandleMultiplayerAgain();
 
 signals:
     void MenuButtonClicked();
@@ -31,12 +34,16 @@ signals:
     void AgainButtonClicked();
     void MultiLobbyButtonClicked(int);
     void MultiPlayAgainClicked();
+    void ClientStateChanged(QString);
+    void ServerPlayAgainClicked();
 
 
 private:
     Ui::EndScreen *ui;
     TcpClient* tcpClient = nullptr;
     bool IsClient;
+    QString ClientUsername;
+    void UpdateUserState();
 };
 
 #endif // ENDSCREEN_H

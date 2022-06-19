@@ -25,18 +25,25 @@ public:
 public slots:
     void DisconnectSocket();
     void ChangeWidgetIndex(int);
+    void ReadyButtonClicked();
+    void PlayAgainButtonClicked();
+    void CheckAllUsersReady();
 
 signals:
     void MenuButtonClickedSignal();
     void GameStarted(QString);
     void GameEnded(int, bool, QString);
     void ClientSendAnswer(QString);
-    void GameScoreUpdated(int, QString);
+    void GameScoreUpdated(int, QString, bool);
     void CloseServer();
     void CloseClient();
     void GamePlayAgainReset();
     void ClientSendUsername(QString);
-    void UserReady();
+    void UserReady(QString);
+    void UpdateScoreboardState(QString);
+    void CanPlayAgain();
+    void NotAllPlayersReady();
+    void CheckAndChangeWidget();
 
 private slots:
 //    void StartServerButtonClicked();
@@ -54,12 +61,14 @@ private slots:
     void UpdateServerUserTable(QString);
     void UpdateUserTable(QString, bool, bool);
     void HandleClientDisconnect();
-    void ReadyButtonClicked();
     void UpdateServerState(QString);
     void UpdateClientState(QString);
+    void RemoveUserFromServerTable(QString);
+    void RemoveUserFromClientTable(QString);
 
 private:
     int FindUsernameRow(QString);
+    void ResetTableStatus(QString);
     Ui::MultiPlayerScreen *ui;
 //    TcpServer* tcpServer = nullptr;
 //    TcpClient* tcpClient = nullptr;
