@@ -23,7 +23,7 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_GameScreen_t {
     const uint offsetsAndSize[14];
-    char stringdata0[107];
+    char stringdata0[95];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(offsetof(qt_meta_stringdata_GameScreen_t, stringdata0) + ofs), len 
@@ -32,15 +32,15 @@ static const qt_meta_stringdata_GameScreen_t qt_meta_stringdata_GameScreen = {
 QT_MOC_LITERAL(0, 10), // "GameScreen"
 QT_MOC_LITERAL(11, 14), // "GameOverSignal"
 QT_MOC_LITERAL(26, 0), // ""
-QT_MOC_LITERAL(27, 22), // "on_EnterButton_clicked"
-QT_MOC_LITERAL(50, 21), // "on_SkipButton_clicked"
-QT_MOC_LITERAL(72, 22), // "on_ClearButton_clicked"
-QT_MOC_LITERAL(95, 11) // "UpdateLabel"
+QT_MOC_LITERAL(27, 18), // "EnterButtonClicked"
+QT_MOC_LITERAL(46, 17), // "SkipButtonClicked"
+QT_MOC_LITERAL(64, 18), // "ClearButtonClicked"
+QT_MOC_LITERAL(83, 11) // "UpdateLabel"
 
     },
     "GameScreen\0GameOverSignal\0\0"
-    "on_EnterButton_clicked\0on_SkipButton_clicked\0"
-    "on_ClearButton_clicked\0UpdateLabel"
+    "EnterButtonClicked\0SkipButtonClicked\0"
+    "ClearButtonClicked\0UpdateLabel"
 };
 #undef QT_MOC_LITERAL
 
@@ -85,9 +85,9 @@ void GameScreen::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         (void)_t;
         switch (_id) {
         case 0: _t->GameOverSignal((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 1: _t->on_EnterButton_clicked(); break;
-        case 2: _t->on_SkipButton_clicked(); break;
-        case 3: _t->on_ClearButton_clicked(); break;
+        case 1: _t->EnterButtonClicked(); break;
+        case 2: _t->SkipButtonClicked(); break;
+        case 3: _t->ClearButtonClicked(); break;
         case 4: _t->UpdateLabel((*reinterpret_cast< QString(*)>(_a[1]))); break;
         default: ;
         }

@@ -121,7 +121,6 @@ int MultiPlayerScreen::FindUsernameRow(QString Username)
 
 void MultiPlayerScreen::UpdateServerState(QString Username)
 {
-    QTableWidgetItem* UsernameItem = new QTableWidgetItem(Username);
     QList<QTableWidgetItem*> Matches = ui->ServerUserTable->findItems(Username, Qt::MatchExactly);
     qDebug() << Matches.size();
     int UsernameRow = ui->ServerUserTable->row(Matches[0]);
@@ -133,7 +132,6 @@ void MultiPlayerScreen::UpdateServerState(QString Username)
 void MultiPlayerScreen::UpdateClientState(QString Username)
 {
     qDebug() << "Searching for username " << Username;
-    QTableWidgetItem* UsernameItem = new QTableWidgetItem(Username);
     QList<QTableWidgetItem*> Matches = ui->ClientUserTable->findItems(Username, Qt::MatchExactly);
     int UsernameRow = ui->ClientUserTable->row(Matches[0]);
     QColor CurrentColour = ui->ClientUserTable->item(UsernameRow, 1)->background().color();

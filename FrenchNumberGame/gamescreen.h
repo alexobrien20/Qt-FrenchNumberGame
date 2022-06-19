@@ -19,9 +19,9 @@ public:
     ~GameScreen();
 
 private slots:
-    void on_EnterButton_clicked();
-    void on_SkipButton_clicked();
-    void on_ClearButton_clicked();
+    void EnterButtonClicked();
+    void SkipButtonClicked();
+    void ClearButtonClicked();
 
 public slots:
     void UpdateLabel(QString);

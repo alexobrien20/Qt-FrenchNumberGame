@@ -41,8 +41,9 @@ void Game::AddClient(QString ClientUsername, int ClientId)
 void Game::ResetGame()
 {
     // Resets the client scores/counts to 0
-    for(auto const& key : ClientScores.keys())
+    for(auto it = ClientScores.begin(); it != ClientScores.end(); it++)
     {
+        auto key = it.key();
         ClientScores[key]["Counter"] = 0;
         ClientScores[key]["Score"] = 0;
     }
@@ -67,8 +68,9 @@ QString Game::CheckServerAnswer(QString answer)
     {
         emit GameEnded(Score, false);
         QString ServerScore = QString::number(Score);
-        for(auto const& key : ClientScores.keys())
+        for(auto it = ClientScores.begin(); it != ClientScores.end(); it++)
         {
+            auto key = it.key();
             if(ClientScores[key]["Counter"] == AmountOfNumbers - 1)
             {
                 emit ClientGameUpdate(ServerMessageTypes::GameScoreUpdate, key, ServerScore);
@@ -108,8 +110,9 @@ void Game::CheckClientAnswer(QString answer, int ClientId)
 
         // Send all of the other scores where the client has finished their game.
         // && send your score to the people who have finished.
-        for(auto const& key : ClientScores.keys())
+        for(auto it = ClientScores.begin(); it != ClientScores.end(); it++)
         {
+            auto key = it.key();
             if(key != ClientId && ClientScores[key]["Counter"] == AmountOfNumbers - 1)
             {
                 qDebug() << "This happened!";
@@ -190,8 +193,9 @@ void  Game::StartMultiplayerGame()
 {
     // Look at the reset game function.
     GenerateNumbers();
-    for(auto& key : ClientScores.keys())
+    for(auto it = ClientScores.begin(); it != ClientScores.end(); it++)
     {
+        auto key = it.key();
         ClientScores[key]["Score"] = 0;
         ClientScores[key]["Counter"] = 0;
     }

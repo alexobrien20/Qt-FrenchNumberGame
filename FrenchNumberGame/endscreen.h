@@ -24,8 +24,8 @@ public slots:
     void NotAllPlayersReady();
 
 private slots:
-    void on_AgainButton_clicked();
-    void on_MenuButton_clicked();
+    void HandleAgainButtonClicked();
+    void HandleMenuButtonClicked();
     void HandleMultiplayerAgain();
 
 signals:

@@ -23,7 +23,7 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_EndScreen_t {
     const uint offsetsAndSize[30];
-    char stringdata0[285];
+    char stringdata0[289];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(offsetof(qt_meta_stringdata_EndScreen_t, stringdata0) + ofs), len 
@@ -41,9 +41,9 @@ QT_MOC_LITERAL(136, 22), // "ServerPlayAgainClicked"
 QT_MOC_LITERAL(159, 16), // "UpdateScoreboard"
 QT_MOC_LITERAL(176, 21), // "UpdateScoreboardState"
 QT_MOC_LITERAL(198, 18), // "NotAllPlayersReady"
-QT_MOC_LITERAL(217, 22), // "on_AgainButton_clicked"
-QT_MOC_LITERAL(240, 21), // "on_MenuButton_clicked"
-QT_MOC_LITERAL(262, 22) // "HandleMultiplayerAgain"
+QT_MOC_LITERAL(217, 24), // "HandleAgainButtonClicked"
+QT_MOC_LITERAL(242, 23), // "HandleMenuButtonClicked"
+QT_MOC_LITERAL(266, 22) // "HandleMultiplayerAgain"
 
     },
     "EndScreen\0MenuButtonClicked\0\0"
@@ -51,8 +51,8 @@ QT_MOC_LITERAL(262, 22) // "HandleMultiplayerAgain"
     "MultiLobbyButtonClicked\0MultiPlayAgainClicked\0"
     "ClientStateChanged\0ServerPlayAgainClicked\0"
     "UpdateScoreboard\0UpdateScoreboardState\0"
-    "NotAllPlayersReady\0on_AgainButton_clicked\0"
-    "on_MenuButton_clicked\0HandleMultiplayerAgain"
+    "NotAllPlayersReady\0HandleAgainButtonClicked\0"
+    "HandleMenuButtonClicked\0HandleMultiplayerAgain"
 };
 #undef QT_MOC_LITERAL
 
@@ -122,8 +122,8 @@ void EndScreen::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
         case 7: _t->UpdateScoreboard((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< bool(*)>(_a[3]))); break;
         case 8: _t->UpdateScoreboardState((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 9: _t->NotAllPlayersReady(); break;
-        case 10: _t->on_AgainButton_clicked(); break;
-        case 11: _t->on_MenuButton_clicked(); break;
+        case 10: _t->HandleAgainButtonClicked(); break;
+        case 11: _t->HandleMenuButtonClicked(); break;
         case 12: _t->HandleMultiplayerAgain(); break;
         default: ;
         }

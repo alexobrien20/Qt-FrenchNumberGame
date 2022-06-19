@@ -21,6 +21,8 @@ EndScreen::EndScreen(QWidget *parent) :
         ui->Scoreboard->setRowCount(0);});
 
     connect(ui->MultiAgainButton, &QPushButton::clicked, this, &EndScreen::HandleMultiplayerAgain);
+    connect(ui->AgainButton, &QPushButton::clicked, this, &EndScreen::HandleAgainButtonClicked);
+    connect(ui->MenuButton, &QPushButton::clicked, this, &EndScreen::HandleMenuButtonClicked);
 }
 
 void EndScreen::SetScore(int Score)
@@ -100,12 +102,12 @@ void EndScreen::MultiPlayerSetUp(int Score, bool BClient, QString Username)
 }
 
 
-void EndScreen::on_AgainButton_clicked()
+void EndScreen::HandleAgainButtonClicked()
 {
     emit AgainButtonClicked();
 }
 
-void EndScreen::on_MenuButton_clicked()
+void EndScreen::HandleMenuButtonClicked()
 {
     emit MenuButtonClicked();
 }

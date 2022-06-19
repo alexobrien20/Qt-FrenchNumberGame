@@ -9,6 +9,9 @@ GameScreen::GameScreen(QWidget *parent) :
     ui(new Ui::GameScreen)
 {
     ui->setupUi(this);
+    connect(ui->EnterButton, &QPushButton::clicked, this, &GameScreen::EnterButtonClicked);
+    connect(ui->SkipButton, &QPushButton::clicked, this, &GameScreen::SkipButtonClicked);
+    connect(ui->ClearButton, &QPushButton::clicked, this, &GameScreen::ClearButtonClicked);
 }
 
 void GameScreen::UpdateLabel(QString Data)
@@ -24,7 +27,7 @@ void GameScreen::StartGame(uint Lowest, uint Highest, int Amount)
     ui->WordLabel->setText(game->GetCurrentNumber());
 }
 
-void GameScreen::on_EnterButton_clicked()
+void GameScreen::EnterButtonClicked()
 {
     QString UserAnswer = ui->UserInput->text();
     game->CheckAnswer(UserAnswer);
@@ -38,7 +41,7 @@ void GameScreen::on_EnterButton_clicked()
     ui->UserInput->setText("");
 }
 
-void GameScreen::on_SkipButton_clicked()
+void GameScreen::SkipButtonClicked()
 {
     CurrentNumber = game->Increment();
     if(CurrentNumber.isEmpty())
@@ -50,7 +53,7 @@ void GameScreen::on_SkipButton_clicked()
     ui->UserInput->setText("");
 }
 
-void GameScreen::on_ClearButton_clicked()
+void GameScreen::ClearButtonClicked()
 {
     ui->UserInput->setText("");
 }
