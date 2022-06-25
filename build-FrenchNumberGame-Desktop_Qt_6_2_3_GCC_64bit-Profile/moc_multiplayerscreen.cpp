@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MultiPlayerScreen_t {
-    const uint offsetsAndSize[78];
-    char stringdata0[696];
+    const uint offsetsAndSize[82];
+    char stringdata0[736];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(offsetof(qt_meta_stringdata_MultiPlayerScreen_t, stringdata0) + ofs), len 
@@ -45,29 +45,31 @@ QT_MOC_LITERAL(171, 21), // "UpdateScoreboardState"
 QT_MOC_LITERAL(193, 12), // "CanPlayAgain"
 QT_MOC_LITERAL(206, 18), // "NotAllPlayersReady"
 QT_MOC_LITERAL(225, 20), // "CheckAndChangeWidget"
-QT_MOC_LITERAL(246, 16), // "DisconnectSocket"
-QT_MOC_LITERAL(263, 17), // "ChangeWidgetIndex"
-QT_MOC_LITERAL(281, 18), // "ReadyButtonClicked"
-QT_MOC_LITERAL(300, 22), // "PlayAgainButtonClicked"
-QT_MOC_LITERAL(323, 18), // "CheckAllUsersReady"
-QT_MOC_LITERAL(342, 23), // "JoinServerButtonClicked"
-QT_MOC_LITERAL(366, 17), // "MenuButtonClicked"
-QT_MOC_LITERAL(384, 15), // "ClientConnected"
-QT_MOC_LITERAL(400, 22), // "StartGameButtonClicked"
-QT_MOC_LITERAL(423, 12), // "DisplayError"
-QT_MOC_LITERAL(436, 15), // "SetUpGameScreen"
-QT_MOC_LITERAL(452, 11), // "GameUpdated"
-QT_MOC_LITERAL(464, 17), // "SkipButtonClicked"
-QT_MOC_LITERAL(482, 18), // "ClearButtonClicked"
-QT_MOC_LITERAL(501, 18), // "EnterButtonClicked"
-QT_MOC_LITERAL(520, 26), // "UsernameEnterButtonClicked"
-QT_MOC_LITERAL(547, 21), // "UpdateServerUserTable"
-QT_MOC_LITERAL(569, 15), // "UpdateUserTable"
-QT_MOC_LITERAL(585, 22), // "HandleClientDisconnect"
-QT_MOC_LITERAL(608, 17), // "UpdateServerState"
-QT_MOC_LITERAL(626, 17), // "UpdateClientState"
-QT_MOC_LITERAL(644, 25), // "RemoveUserFromServerTable"
-QT_MOC_LITERAL(670, 25) // "RemoveUserFromClientTable"
+QT_MOC_LITERAL(246, 16), // "CanReturnToLobby"
+QT_MOC_LITERAL(263, 16), // "DisconnectSocket"
+QT_MOC_LITERAL(280, 17), // "ChangeWidgetIndex"
+QT_MOC_LITERAL(298, 18), // "ReadyButtonClicked"
+QT_MOC_LITERAL(317, 22), // "PlayAgainButtonClicked"
+QT_MOC_LITERAL(340, 18), // "CheckAllUsersReady"
+QT_MOC_LITERAL(359, 23), // "JoinServerButtonClicked"
+QT_MOC_LITERAL(383, 17), // "MenuButtonClicked"
+QT_MOC_LITERAL(401, 15), // "ClientConnected"
+QT_MOC_LITERAL(417, 22), // "StartGameButtonClicked"
+QT_MOC_LITERAL(440, 12), // "DisplayError"
+QT_MOC_LITERAL(453, 15), // "SetUpGameScreen"
+QT_MOC_LITERAL(469, 11), // "GameUpdated"
+QT_MOC_LITERAL(481, 17), // "SkipButtonClicked"
+QT_MOC_LITERAL(499, 18), // "ClearButtonClicked"
+QT_MOC_LITERAL(518, 18), // "EnterButtonClicked"
+QT_MOC_LITERAL(537, 26), // "UsernameEnterButtonClicked"
+QT_MOC_LITERAL(564, 21), // "UpdateServerUserTable"
+QT_MOC_LITERAL(586, 15), // "UpdateUserTable"
+QT_MOC_LITERAL(602, 22), // "HandleClientDisconnect"
+QT_MOC_LITERAL(625, 17), // "UpdateServerState"
+QT_MOC_LITERAL(643, 17), // "UpdateClientState"
+QT_MOC_LITERAL(661, 25), // "RemoveUserFromServerTable"
+QT_MOC_LITERAL(687, 25), // "RemoveUserFromClientTable"
+QT_MOC_LITERAL(713, 22) // "ClientUsernameAccepted"
 
     },
     "MultiPlayerScreen\0MenuButtonClickedSignal\0"
@@ -76,18 +78,20 @@ QT_MOC_LITERAL(670, 25) // "RemoveUserFromClientTable"
     "GamePlayAgainReset\0ClientSendUsername\0"
     "UserReady\0UpdateScoreboardState\0"
     "CanPlayAgain\0NotAllPlayersReady\0"
-    "CheckAndChangeWidget\0DisconnectSocket\0"
-    "ChangeWidgetIndex\0ReadyButtonClicked\0"
-    "PlayAgainButtonClicked\0CheckAllUsersReady\0"
-    "JoinServerButtonClicked\0MenuButtonClicked\0"
-    "ClientConnected\0StartGameButtonClicked\0"
-    "DisplayError\0SetUpGameScreen\0GameUpdated\0"
+    "CheckAndChangeWidget\0CanReturnToLobby\0"
+    "DisconnectSocket\0ChangeWidgetIndex\0"
+    "ReadyButtonClicked\0PlayAgainButtonClicked\0"
+    "CheckAllUsersReady\0JoinServerButtonClicked\0"
+    "MenuButtonClicked\0ClientConnected\0"
+    "StartGameButtonClicked\0DisplayError\0"
+    "SetUpGameScreen\0GameUpdated\0"
     "SkipButtonClicked\0ClearButtonClicked\0"
     "EnterButtonClicked\0UsernameEnterButtonClicked\0"
     "UpdateServerUserTable\0UpdateUserTable\0"
     "HandleClientDisconnect\0UpdateServerState\0"
     "UpdateClientState\0RemoveUserFromServerTable\0"
-    "RemoveUserFromClientTable"
+    "RemoveUserFromClientTable\0"
+    "ClientUsernameAccepted"
 };
 #undef QT_MOC_LITERAL
 
@@ -97,53 +101,55 @@ static const uint qt_meta_data_MultiPlayerScreen[] = {
       10,       // revision
        0,       // classname
        0,    0, // classinfo
-      37,   14, // methods
+      39,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-      14,       // signalCount
+      15,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    0,  236,    2, 0x06,    1 /* Public */,
-       3,    1,  237,    2, 0x06,    2 /* Public */,
-       4,    3,  240,    2, 0x06,    4 /* Public */,
-       5,    1,  247,    2, 0x06,    8 /* Public */,
-       6,    3,  250,    2, 0x06,   10 /* Public */,
-       7,    0,  257,    2, 0x06,   14 /* Public */,
-       8,    0,  258,    2, 0x06,   15 /* Public */,
-       9,    0,  259,    2, 0x06,   16 /* Public */,
-      10,    1,  260,    2, 0x06,   17 /* Public */,
-      11,    1,  263,    2, 0x06,   19 /* Public */,
-      12,    1,  266,    2, 0x06,   21 /* Public */,
-      13,    0,  269,    2, 0x06,   23 /* Public */,
-      14,    0,  270,    2, 0x06,   24 /* Public */,
-      15,    0,  271,    2, 0x06,   25 /* Public */,
+       1,    0,  248,    2, 0x06,    1 /* Public */,
+       3,    1,  249,    2, 0x06,    2 /* Public */,
+       4,    3,  252,    2, 0x06,    4 /* Public */,
+       5,    1,  259,    2, 0x06,    8 /* Public */,
+       6,    3,  262,    2, 0x06,   10 /* Public */,
+       7,    0,  269,    2, 0x06,   14 /* Public */,
+       8,    0,  270,    2, 0x06,   15 /* Public */,
+       9,    0,  271,    2, 0x06,   16 /* Public */,
+      10,    1,  272,    2, 0x06,   17 /* Public */,
+      11,    1,  275,    2, 0x06,   19 /* Public */,
+      12,    1,  278,    2, 0x06,   21 /* Public */,
+      13,    0,  281,    2, 0x06,   23 /* Public */,
+      14,    0,  282,    2, 0x06,   24 /* Public */,
+      15,    0,  283,    2, 0x06,   25 /* Public */,
+      16,    1,  284,    2, 0x06,   26 /* Public */,
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-      16,    0,  272,    2, 0x0a,   26 /* Public */,
-      17,    1,  273,    2, 0x0a,   27 /* Public */,
-      18,    0,  276,    2, 0x0a,   29 /* Public */,
-      19,    0,  277,    2, 0x0a,   30 /* Public */,
-      20,    0,  278,    2, 0x0a,   31 /* Public */,
-      21,    0,  279,    2, 0x08,   32 /* Private */,
-      22,    0,  280,    2, 0x08,   33 /* Private */,
-      23,    0,  281,    2, 0x08,   34 /* Private */,
-      24,    0,  282,    2, 0x08,   35 /* Private */,
-      25,    1,  283,    2, 0x08,   36 /* Private */,
-      26,    1,  286,    2, 0x08,   38 /* Private */,
-      27,    1,  289,    2, 0x08,   40 /* Private */,
-      28,    0,  292,    2, 0x08,   42 /* Private */,
-      29,    0,  293,    2, 0x08,   43 /* Private */,
-      30,    0,  294,    2, 0x08,   44 /* Private */,
-      31,    0,  295,    2, 0x08,   45 /* Private */,
-      32,    1,  296,    2, 0x08,   46 /* Private */,
-      33,    3,  299,    2, 0x08,   48 /* Private */,
-      34,    0,  306,    2, 0x08,   52 /* Private */,
-      35,    1,  307,    2, 0x08,   53 /* Private */,
-      36,    1,  310,    2, 0x08,   55 /* Private */,
-      37,    1,  313,    2, 0x08,   57 /* Private */,
-      38,    1,  316,    2, 0x08,   59 /* Private */,
+      17,    0,  287,    2, 0x0a,   28 /* Public */,
+      18,    1,  288,    2, 0x0a,   29 /* Public */,
+      19,    0,  291,    2, 0x0a,   31 /* Public */,
+      20,    0,  292,    2, 0x0a,   32 /* Public */,
+      21,    1,  293,    2, 0x0a,   33 /* Public */,
+      22,    0,  296,    2, 0x08,   35 /* Private */,
+      23,    0,  297,    2, 0x08,   36 /* Private */,
+      24,    0,  298,    2, 0x08,   37 /* Private */,
+      25,    0,  299,    2, 0x08,   38 /* Private */,
+      26,    1,  300,    2, 0x08,   39 /* Private */,
+      27,    1,  303,    2, 0x08,   41 /* Private */,
+      28,    1,  306,    2, 0x08,   43 /* Private */,
+      29,    0,  309,    2, 0x08,   45 /* Private */,
+      30,    0,  310,    2, 0x08,   46 /* Private */,
+      31,    0,  311,    2, 0x08,   47 /* Private */,
+      32,    0,  312,    2, 0x08,   48 /* Private */,
+      33,    1,  313,    2, 0x08,   49 /* Private */,
+      34,    3,  316,    2, 0x08,   51 /* Private */,
+      35,    0,  323,    2, 0x08,   55 /* Private */,
+      36,    1,  324,    2, 0x08,   56 /* Private */,
+      37,    1,  327,    2, 0x08,   58 /* Private */,
+      38,    1,  330,    2, 0x08,   60 /* Private */,
+      39,    1,  333,    2, 0x08,   62 /* Private */,
+      40,    0,  336,    2, 0x08,   64 /* Private */,
 
  // signals: parameters
     QMetaType::Void,
@@ -160,13 +166,14 @@ static const uint qt_meta_data_MultiPlayerScreen[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void, QMetaType::Int,    2,
 
  // slots: parameters
     QMetaType::Void,
     QMetaType::Void, QMetaType::Int,    2,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void,
+    QMetaType::Void, QMetaType::QString,    2,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -185,6 +192,7 @@ static const uint qt_meta_data_MultiPlayerScreen[] = {
     QMetaType::Void, QMetaType::QString,    2,
     QMetaType::Void, QMetaType::QString,    2,
     QMetaType::Void, QMetaType::QString,    2,
+    QMetaType::Void,
 
        0        // eod
 };
@@ -209,29 +217,31 @@ void MultiPlayerScreen::qt_static_metacall(QObject *_o, QMetaObject::Call _c, in
         case 11: _t->CanPlayAgain(); break;
         case 12: _t->NotAllPlayersReady(); break;
         case 13: _t->CheckAndChangeWidget(); break;
-        case 14: _t->DisconnectSocket(); break;
-        case 15: _t->ChangeWidgetIndex((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 16: _t->ReadyButtonClicked(); break;
-        case 17: _t->PlayAgainButtonClicked(); break;
-        case 18: _t->CheckAllUsersReady(); break;
-        case 19: _t->JoinServerButtonClicked(); break;
-        case 20: _t->MenuButtonClicked(); break;
-        case 21: _t->ClientConnected(); break;
-        case 22: _t->StartGameButtonClicked(); break;
-        case 23: _t->DisplayError((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 24: _t->SetUpGameScreen((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 25: _t->GameUpdated((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 26: _t->SkipButtonClicked(); break;
-        case 27: _t->ClearButtonClicked(); break;
-        case 28: _t->EnterButtonClicked(); break;
-        case 29: _t->UsernameEnterButtonClicked(); break;
-        case 30: _t->UpdateServerUserTable((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 31: _t->UpdateUserTable((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< bool(*)>(_a[2])),(*reinterpret_cast< bool(*)>(_a[3]))); break;
-        case 32: _t->HandleClientDisconnect(); break;
-        case 33: _t->UpdateServerState((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 34: _t->UpdateClientState((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 35: _t->RemoveUserFromServerTable((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 36: _t->RemoveUserFromClientTable((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 14: _t->CanReturnToLobby((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 15: _t->DisconnectSocket(); break;
+        case 16: _t->ChangeWidgetIndex((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 17: _t->ReadyButtonClicked(); break;
+        case 18: _t->PlayAgainButtonClicked(); break;
+        case 19: _t->CheckAllUsersReady((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 20: _t->JoinServerButtonClicked(); break;
+        case 21: _t->MenuButtonClicked(); break;
+        case 22: _t->ClientConnected(); break;
+        case 23: _t->StartGameButtonClicked(); break;
+        case 24: _t->DisplayError((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 25: _t->SetUpGameScreen((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 26: _t->GameUpdated((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 27: _t->SkipButtonClicked(); break;
+        case 28: _t->ClearButtonClicked(); break;
+        case 29: _t->EnterButtonClicked(); break;
+        case 30: _t->UsernameEnterButtonClicked(); break;
+        case 31: _t->UpdateServerUserTable((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 32: _t->UpdateUserTable((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< bool(*)>(_a[2])),(*reinterpret_cast< bool(*)>(_a[3]))); break;
+        case 33: _t->HandleClientDisconnect(); break;
+        case 34: _t->UpdateServerState((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 35: _t->UpdateClientState((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 36: _t->RemoveUserFromServerTable((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 37: _t->RemoveUserFromClientTable((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 38: _t->ClientUsernameAccepted(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -334,6 +344,13 @@ void MultiPlayerScreen::qt_static_metacall(QObject *_o, QMetaObject::Call _c, in
                 return;
             }
         }
+        {
+            using _t = void (MultiPlayerScreen::*)(int );
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&MultiPlayerScreen::CanReturnToLobby)) {
+                *result = 14;
+                return;
+            }
+        }
     }
 }
 
@@ -344,8 +361,8 @@ const QMetaObject MultiPlayerScreen::staticMetaObject = { {
     qt_static_metacall,
     nullptr,
 qt_incomplete_metaTypeArray<qt_meta_stringdata_MultiPlayerScreen_t
-, QtPrivate::TypeAndForceComplete<MultiPlayerScreen, std::true_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<bool, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<bool, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>
-, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<bool, std::false_type>, QtPrivate::TypeAndForceComplete<bool, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>
+, QtPrivate::TypeAndForceComplete<MultiPlayerScreen, std::true_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<bool, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<bool, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>
+, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<bool, std::false_type>, QtPrivate::TypeAndForceComplete<bool, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>
 
 
 >,
@@ -372,13 +389,13 @@ int MultiPlayerScreen::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 37)
+        if (_id < 39)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 37;
+        _id -= 39;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 37)
+        if (_id < 39)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 37;
+        _id -= 39;
     }
     return _id;
 }
@@ -472,6 +489,13 @@ void MultiPlayerScreen::NotAllPlayersReady()
 void MultiPlayerScreen::CheckAndChangeWidget()
 {
     QMetaObject::activate(this, &staticMetaObject, 13, nullptr);
+}
+
+// SIGNAL 14
+void MultiPlayerScreen::CanReturnToLobby(int _t1)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
+    QMetaObject::activate(this, &staticMetaObject, 14, _a);
 }
 QT_WARNING_POP
 QT_END_MOC_NAMESPACE

@@ -14,6 +14,9 @@ enum class ServerMessageTypes
     GameSendServerUsername,
     GameUpdateUserStatus,
     GameClientDisconnect,
+    GameReturnToLobby,
+    GameUsernameTaken,
+    GameUsernameAccepted,
 };
 
 class TcpServer : public QObject

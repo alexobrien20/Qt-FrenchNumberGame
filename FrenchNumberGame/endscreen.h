@@ -27,6 +27,7 @@ private slots:
     void HandleAgainButtonClicked();
     void HandleMenuButtonClicked();
     void HandleMultiplayerAgain();
+    void HandleMultiplayerLobby();
 
 signals:
     void MenuButtonClicked();
@@ -35,7 +36,7 @@ signals:
     void MultiLobbyButtonClicked(int);
     void MultiPlayAgainClicked();
     void ClientStateChanged(QString);
-    void ServerPlayAgainClicked();
+    void ServerCheckStatuses(QString);
 
 
 private:

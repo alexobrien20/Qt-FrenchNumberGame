@@ -23,6 +23,9 @@ signals:
     void UserStateChanged(QString);
     void OtherClientDisconnected(QString);
     void ClientScoreboardStateChanged(QString);
+    void ClientReturnToLobby();
+    void UsernameAlreadyTaken();
+    void UsernameAccepted();
 
 public slots:
     void RequestNewAnswer(QString);

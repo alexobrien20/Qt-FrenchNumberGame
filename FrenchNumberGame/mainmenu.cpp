@@ -29,12 +29,13 @@ MainMenu::MainMenu(QWidget *parent)
     connect(EndPage, &EndScreen::MultiLobbyButtonClicked, this, &MainMenu::HandleReturnToLobby);
     connect(EndPage, &EndScreen::MultiPlayAgainClicked, this, [=](){HandleReturnToLobby(3);});
     connect(EndPage, &EndScreen::ClientStateChanged, MultiPlayerPage, &MultiPlayerScreen::PlayAgainButtonClicked);
-    connect(EndPage, &EndScreen::ServerPlayAgainClicked, MultiPlayerPage, &MultiPlayerScreen::CheckAllUsersReady);
+    connect(EndPage, &EndScreen::ServerCheckStatuses, MultiPlayerPage, &MultiPlayerScreen::CheckAllUsersReady);
     connect(MultiPlayerPage, &MultiPlayerScreen::MenuButtonClickedSignal, this, [=](){this->ui->stackedWidget->setCurrentWidget(MainScreenPage);});
     connect(MultiPlayerPage, &MultiPlayerScreen::GameEnded, this, &MainMenu::SetMultiPlayerEndScreenWidget);
     connect(MultiPlayerPage, &MultiPlayerScreen::GameScoreUpdated, EndPage, &EndScreen::UpdateScoreboard);
     connect(MultiPlayerPage, &MultiPlayerScreen::UpdateScoreboardState, EndPage, &EndScreen::UpdateScoreboardState);
     connect(MultiPlayerPage, &MultiPlayerScreen::CanPlayAgain, this, [=](){HandleReturnToLobby(3);});
+    connect(MultiPlayerPage, &MultiPlayerScreen::CanReturnToLobby, this, [=](int Index){HandleReturnToLobby(Index);});
     connect(MultiPlayerPage, &MultiPlayerScreen::NotAllPlayersReady, EndPage, &EndScreen::NotAllPlayersReady);
     connect(MultiPlayerPage, &MultiPlayerScreen::CheckAndChangeWidget, this, &MainMenu::CheckAndChangeWidget);
     connect(ui->SinglePlayerButton, &QPushButton::clicked, this, [=](){this->ui->stackedWidget->setCurrentWidget(GameSettingsPage);});

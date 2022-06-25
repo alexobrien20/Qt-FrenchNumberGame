@@ -3,7 +3,7 @@
 #include <QJsonObject>
 
 TcpServer::TcpServer(const QHostAddress Hostname, int PortNumber, QString Username, QObject *parent)
-    : QObject{parent}, HostIp{Hostname}, Port{PortNumber}, UserCount{1}, ServerUsername{Username}
+    : QObject{parent}, HostIp{Hostname}, Port{PortNumber}, UserCount{1}, ServerUsername{Username.simplified()}
 {
 
     in.setVersion(QDataStream::Qt_6_2);
@@ -151,11 +151,26 @@ void TcpServer::ReadMessage()
         }
         else if(JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameSendUsername))
         {
-            // 1) Send all other usernames to that client
-            QString Username = JsonObj["Data"].toString();
+            QString Username = JsonObj["Data"].toString().simplified();
             int ClientId = ClientIds[clientSocket];
-            for(auto &key : ClientIndex.keys())
+            // 1) Check that username doesn't already exist
+            if(Username == ServerUsername)
             {
+                MessageClient(ServerMessageTypes::GameUsernameTaken, ClientId, "");
+                return;
+            }
+            for(auto &value : ClientUsernames)
+            {
+                if(value == Username)
+                {
+                    MessageClient(ServerMessageTypes::GameUsernameTaken, ClientId, "");
+                    return;
+                }
+            }
+            // 2) Send all other usernames to that client
+            for(auto it = ClientIndex.begin(); it != ClientIndex.end(); it++)
+            {
+                auto key = it.key();
                 if(key == ClientId)
                    continue;
                 QString ClientUsername = ClientUsernames[key];
@@ -167,10 +182,10 @@ void TcpServer::ReadMessage()
                 };
                 MessageClientData(ServerMessageTypes::GameSendUsername, Data, ClientId);
             }
-            // 2) Send the newly conencted client the ServerUsername
+            // 3) Send the newly connected client the ServerUsername
             MessageClient(ServerMessageTypes::GameSendServerUsername, ClientId, ServerUsername);
             emit ClientUsernameRecieved(Username, ClientId);
-            // 3) Send the newly connected client name to all connected clients.
+            // 4) Send the newly connected client name to all other connected clients.
             QJsonObject Data
             {
                 {"Username", Username},
@@ -178,6 +193,7 @@ void TcpServer::ReadMessage()
             };
             MessageOtherClientsData(ServerMessageTypes::GameSendUsername, Data, ClientId);
             ClientUsernames.insert(ClientId, Username);
+            MessageClient(ServerMessageTypes::GameUsernameAccepted, ClientId, "");
         }
     }
 }
@@ -241,8 +257,9 @@ void TcpServer::MessageOtherClients(ServerMessageTypes UpdateType, QString Data,
         {"Data", Data},
     };
     QJsonDocument jsonDoc{object};
-    for(const auto &key : ClientIndex.keys())
+    for(auto it = ClientIndex.begin(); it != ClientIndex.end(); it++)
     {
+        auto key = it.key();
         if(key == ClientId)
             continue;
         QTcpSocket* connection = ClientIndex[key];
@@ -274,7 +291,7 @@ void TcpServer::MessageAll(ServerMessageTypes updateType, QString question)
 
 bool TcpServer::AllPlayersReady()
 {
-    for(auto value : ClientStates.values())
+    for(auto value : ClientStates)
     {
         if(value != true)
             return false;
@@ -286,7 +303,7 @@ bool TcpServer::AllPlayersReady()
 bool TcpServer::StartGame(QString Question)
 {
     // Check if all players are ready
-    for(auto value : ClientStates.values())
+    for(auto value : ClientStates)
     {
         if(value != true)
             return false;

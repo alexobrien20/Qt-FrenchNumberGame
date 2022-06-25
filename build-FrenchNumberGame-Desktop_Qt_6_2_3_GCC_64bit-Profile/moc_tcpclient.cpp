@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_TcpClient_t {
-    const uint offsetsAndSize[40];
-    char stringdata0[310];
+    const uint offsetsAndSize[46];
+    char stringdata0[368];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(offsetof(qt_meta_stringdata_TcpClient_t, stringdata0) + ofs), len 
@@ -42,13 +42,16 @@ QT_MOC_LITERAL(120, 13), // "NewUserJoined"
 QT_MOC_LITERAL(134, 16), // "UserStateChanged"
 QT_MOC_LITERAL(151, 23), // "OtherClientDisconnected"
 QT_MOC_LITERAL(175, 28), // "ClientScoreboardStateChanged"
-QT_MOC_LITERAL(204, 16), // "RequestNewAnswer"
-QT_MOC_LITERAL(221, 12), // "SendUsername"
-QT_MOC_LITERAL(234, 11), // "CloseClient"
-QT_MOC_LITERAL(246, 14), // "SendUserStatus"
-QT_MOC_LITERAL(261, 15), // "ClientConnected"
-QT_MOC_LITERAL(277, 15), // "MessageRecieved"
-QT_MOC_LITERAL(293, 16) // "HandleDisconnect"
+QT_MOC_LITERAL(204, 19), // "ClientReturnToLobby"
+QT_MOC_LITERAL(224, 20), // "UsernameAlreadyTaken"
+QT_MOC_LITERAL(245, 16), // "UsernameAccepted"
+QT_MOC_LITERAL(262, 16), // "RequestNewAnswer"
+QT_MOC_LITERAL(279, 12), // "SendUsername"
+QT_MOC_LITERAL(292, 11), // "CloseClient"
+QT_MOC_LITERAL(304, 14), // "SendUserStatus"
+QT_MOC_LITERAL(319, 15), // "ClientConnected"
+QT_MOC_LITERAL(335, 15), // "MessageRecieved"
+QT_MOC_LITERAL(351, 16) // "HandleDisconnect"
 
     },
     "TcpClient\0ClientErrorSignal\0\0"
@@ -57,9 +60,11 @@ QT_MOC_LITERAL(293, 16) // "HandleDisconnect"
     "ClientDisconnected\0NewUserJoined\0"
     "UserStateChanged\0OtherClientDisconnected\0"
     "ClientScoreboardStateChanged\0"
-    "RequestNewAnswer\0SendUsername\0CloseClient\0"
-    "SendUserStatus\0ClientConnected\0"
-    "MessageRecieved\0HandleDisconnect"
+    "ClientReturnToLobby\0UsernameAlreadyTaken\0"
+    "UsernameAccepted\0RequestNewAnswer\0"
+    "SendUsername\0CloseClient\0SendUserStatus\0"
+    "ClientConnected\0MessageRecieved\0"
+    "HandleDisconnect"
 };
 #undef QT_MOC_LITERAL
 
@@ -69,34 +74,37 @@ static const uint qt_meta_data_TcpClient[] = {
       10,       // revision
        0,       // classname
        0,    0, // classinfo
-      18,   14, // methods
+      21,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-      11,       // signalCount
+      14,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    1,  122,    2, 0x06,    1 /* Public */,
-       3,    0,  125,    2, 0x06,    3 /* Public */,
-       4,    1,  126,    2, 0x06,    4 /* Public */,
-       5,    1,  129,    2, 0x06,    6 /* Public */,
-       6,    2,  132,    2, 0x06,    8 /* Public */,
-       7,    3,  137,    2, 0x06,   11 /* Public */,
-       8,    0,  144,    2, 0x06,   15 /* Public */,
-       9,    3,  145,    2, 0x06,   16 /* Public */,
-      10,    1,  152,    2, 0x06,   20 /* Public */,
-      11,    1,  155,    2, 0x06,   22 /* Public */,
-      12,    1,  158,    2, 0x06,   24 /* Public */,
+       1,    1,  140,    2, 0x06,    1 /* Public */,
+       3,    0,  143,    2, 0x06,    3 /* Public */,
+       4,    1,  144,    2, 0x06,    4 /* Public */,
+       5,    1,  147,    2, 0x06,    6 /* Public */,
+       6,    2,  150,    2, 0x06,    8 /* Public */,
+       7,    3,  155,    2, 0x06,   11 /* Public */,
+       8,    0,  162,    2, 0x06,   15 /* Public */,
+       9,    3,  163,    2, 0x06,   16 /* Public */,
+      10,    1,  170,    2, 0x06,   20 /* Public */,
+      11,    1,  173,    2, 0x06,   22 /* Public */,
+      12,    1,  176,    2, 0x06,   24 /* Public */,
+      13,    0,  179,    2, 0x06,   26 /* Public */,
+      14,    0,  180,    2, 0x06,   27 /* Public */,
+      15,    0,  181,    2, 0x06,   28 /* Public */,
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-      13,    1,  161,    2, 0x0a,   26 /* Public */,
-      14,    1,  164,    2, 0x0a,   28 /* Public */,
-      15,    0,  167,    2, 0x0a,   30 /* Public */,
-      16,    1,  168,    2, 0x0a,   31 /* Public */,
-      17,    0,  171,    2, 0x08,   33 /* Private */,
-      18,    0,  172,    2, 0x08,   34 /* Private */,
-      19,    0,  173,    2, 0x08,   35 /* Private */,
+      16,    1,  182,    2, 0x0a,   29 /* Public */,
+      17,    1,  185,    2, 0x0a,   31 /* Public */,
+      18,    0,  188,    2, 0x0a,   33 /* Public */,
+      19,    1,  189,    2, 0x0a,   34 /* Public */,
+      20,    0,  192,    2, 0x08,   36 /* Private */,
+      21,    0,  193,    2, 0x08,   37 /* Private */,
+      22,    0,  194,    2, 0x08,   38 /* Private */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::QString,    2,
@@ -110,6 +118,9 @@ static const uint qt_meta_data_TcpClient[] = {
     QMetaType::Void, QMetaType::QString,    2,
     QMetaType::Void, QMetaType::QString,    2,
     QMetaType::Void, QMetaType::QString,    2,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
 
  // slots: parameters
     QMetaType::Void, QMetaType::QString,    2,
@@ -140,13 +151,16 @@ void TcpClient::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
         case 8: _t->UserStateChanged((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 9: _t->OtherClientDisconnected((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 10: _t->ClientScoreboardStateChanged((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 11: _t->RequestNewAnswer((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 12: _t->SendUsername((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 13: _t->CloseClient(); break;
-        case 14: _t->SendUserStatus((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 15: _t->ClientConnected(); break;
-        case 16: _t->MessageRecieved(); break;
-        case 17: _t->HandleDisconnect(); break;
+        case 11: _t->ClientReturnToLobby(); break;
+        case 12: _t->UsernameAlreadyTaken(); break;
+        case 13: _t->UsernameAccepted(); break;
+        case 14: _t->RequestNewAnswer((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 15: _t->SendUsername((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 16: _t->CloseClient(); break;
+        case 17: _t->SendUserStatus((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 18: _t->ClientConnected(); break;
+        case 19: _t->MessageRecieved(); break;
+        case 20: _t->HandleDisconnect(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -228,6 +242,27 @@ void TcpClient::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
                 return;
             }
         }
+        {
+            using _t = void (TcpClient::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&TcpClient::ClientReturnToLobby)) {
+                *result = 11;
+                return;
+            }
+        }
+        {
+            using _t = void (TcpClient::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&TcpClient::UsernameAlreadyTaken)) {
+                *result = 12;
+                return;
+            }
+        }
+        {
+            using _t = void (TcpClient::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&TcpClient::UsernameAccepted)) {
+                *result = 13;
+                return;
+            }
+        }
     }
 }
 
@@ -238,7 +273,7 @@ const QMetaObject TcpClient::staticMetaObject = { {
     qt_static_metacall,
     nullptr,
 qt_incomplete_metaTypeArray<qt_meta_stringdata_TcpClient_t
-, QtPrivate::TypeAndForceComplete<TcpClient, std::true_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<bool, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<bool, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<bool, std::false_type>, QtPrivate::TypeAndForceComplete<bool, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>
+, QtPrivate::TypeAndForceComplete<TcpClient, std::true_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<bool, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<bool, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<bool, std::false_type>, QtPrivate::TypeAndForceComplete<bool, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>
 , QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>
 
 
@@ -266,13 +301,13 @@ int TcpClient::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 18)
+        if (_id < 21)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 18;
+        _id -= 21;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 18)
+        if (_id < 21)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 18;
+        _id -= 21;
     }
     return _id;
 }
@@ -350,6 +385,24 @@ void TcpClient::ClientScoreboardStateChanged(QString _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
     QMetaObject::activate(this, &staticMetaObject, 10, _a);
+}
+
+// SIGNAL 11
+void TcpClient::ClientReturnToLobby()
+{
+    QMetaObject::activate(this, &staticMetaObject, 11, nullptr);
+}
+
+// SIGNAL 12
+void TcpClient::UsernameAlreadyTaken()
+{
+    QMetaObject::activate(this, &staticMetaObject, 12, nullptr);
+}
+
+// SIGNAL 13
+void TcpClient::UsernameAccepted()
+{
+    QMetaObject::activate(this, &staticMetaObject, 13, nullptr);
 }
 QT_WARNING_POP
 QT_END_MOC_NAMESPACE

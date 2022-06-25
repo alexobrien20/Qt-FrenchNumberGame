@@ -77,7 +77,7 @@ public:
     QLineEdit *UserInput;
     QWidget *UsernamePage;
     QVBoxLayout *verticalLayout_5;
-    QLabel *label_5;
+    QLabel *UsernameLabel;
     QLineEdit *UsernameInputBox;
     QGridLayout *gridLayout_7;
     QPushButton *UsernameMenuButton;
@@ -333,10 +333,10 @@ public:
         UsernamePage->setObjectName(QString::fromUtf8("UsernamePage"));
         verticalLayout_5 = new QVBoxLayout(UsernamePage);
         verticalLayout_5->setObjectName(QString::fromUtf8("verticalLayout_5"));
-        label_5 = new QLabel(UsernamePage);
-        label_5->setObjectName(QString::fromUtf8("label_5"));
+        UsernameLabel = new QLabel(UsernamePage);
+        UsernameLabel->setObjectName(QString::fromUtf8("UsernameLabel"));
 
-        verticalLayout_5->addWidget(label_5, 0, Qt::AlignHCenter);
+        verticalLayout_5->addWidget(UsernameLabel, 0, Qt::AlignHCenter);
 
         UsernameInputBox = new QLineEdit(UsernamePage);
         UsernameInputBox->setObjectName(QString::fromUtf8("UsernameInputBox"));
@@ -401,7 +401,7 @@ public:
         SkipButton->setText(QCoreApplication::translate("MultiPlayerScreen", "Skip", nullptr));
         ClearButton->setText(QCoreApplication::translate("MultiPlayerScreen", "Clear", nullptr));
         EnterButton->setText(QCoreApplication::translate("MultiPlayerScreen", "Enter", nullptr));
-        label_5->setText(QCoreApplication::translate("MultiPlayerScreen", "Please enter a username. ", nullptr));
+        UsernameLabel->setText(QCoreApplication::translate("MultiPlayerScreen", "Please enter a username. ", nullptr));
         UsernameMenuButton->setText(QCoreApplication::translate("MultiPlayerScreen", "Menu", nullptr));
         UsernameEnterButton->setText(QCoreApplication::translate("MultiPlayerScreen", "Enter", nullptr));
     } // retranslateUi

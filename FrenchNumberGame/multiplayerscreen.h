@@ -27,7 +27,7 @@ public slots:
     void ChangeWidgetIndex(int);
     void ReadyButtonClicked();
     void PlayAgainButtonClicked();
-    void CheckAllUsersReady();
+    void CheckAllUsersReady(QString);
 
 signals:
     void MenuButtonClickedSignal();
@@ -44,6 +44,7 @@ signals:
     void CanPlayAgain();
     void NotAllPlayersReady();
     void CheckAndChangeWidget();
+    void CanReturnToLobby(int);
 
 private slots:
 //    void StartServerButtonClicked();
@@ -65,6 +66,7 @@ private slots:
     void UpdateClientState(QString);
     void RemoveUserFromServerTable(QString);
     void RemoveUserFromClientTable(QString);
+    void ClientUsernameAccepted();
 
 private:
     int FindUsernameRow(QString);

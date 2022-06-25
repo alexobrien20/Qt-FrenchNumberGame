@@ -14,12 +14,13 @@ EndScreen::EndScreen(QWidget *parent) :
         emit MenuButtonClicked();
         ui->Scoreboard->setRowCount(0);});
 
-    connect(ui->MultiLobbyButton, &QPushButton::clicked, this, [=](){
-        // Needs to delete tcpClient if client.
-        int index = IsClient ? 2 : 1;
-        emit MultiLobbyButtonClicked(index);
-        ui->Scoreboard->setRowCount(0);});
+//    connect(ui->MultiLobbyButton, &QPushButton::clicked, this, [=](){
+//        // Needs to delete tcpClient if client.
+//        int index = IsClient ? 2 : 1;
+//        emit MultiLobbyButtonClicked(index);
+//        ui->Scoreboard->setRowCount(0);});
 
+    connect(ui->MultiLobbyButton, &QPushButton::clicked, this, &EndScreen::HandleMultiplayerLobby);
     connect(ui->MultiAgainButton, &QPushButton::clicked, this, &EndScreen::HandleMultiplayerAgain);
     connect(ui->AgainButton, &QPushButton::clicked, this, &EndScreen::HandleAgainButtonClicked);
     connect(ui->MenuButton, &QPushButton::clicked, this, &EndScreen::HandleMenuButtonClicked);
@@ -45,6 +46,18 @@ void EndScreen::NotAllPlayersReady()
     ui->MultiAgainButton->setText(tr("Not all players are ready!"));
 }
 
+void EndScreen::HandleMultiplayerLobby()
+{
+    if(IsClient)
+    {
+
+        emit ClientStateChanged("Scoreboard");
+        UpdateScoreboardState(ClientUsername);
+        return;
+    }
+    emit ServerCheckStatuses("Lobby");
+}
+
 void EndScreen::HandleMultiplayerAgain()
 {
     // If Client then update your state and send it to the server
@@ -55,7 +68,7 @@ void EndScreen::HandleMultiplayerAgain()
         UpdateScoreboardState(ClientUsername);
         return;
     }
-    emit ServerPlayAgainClicked();
+    emit ServerCheckStatuses("Again");
     // Else your the server and you want to try and play again
     // We have to check all the states are ready.
 //    emit MultiPlayAgainClicked();

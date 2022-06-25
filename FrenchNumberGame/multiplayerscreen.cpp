@@ -76,6 +76,18 @@ void MultiPlayerScreen::RemoveUserFromClientTable(QString Username)
     ui->ClientUserTable->removeRow(UsernameRow);
 }
 
+void MultiPlayerScreen::ClientUsernameAccepted()
+{
+    int NextRow = ui->ClientUserTable->rowCount();
+    ui->ClientUserTable->insertRow(NextRow);
+    QTableWidgetItem* IdItem = new QTableWidgetItem(Username);
+    QTableWidgetItem* ReadyItem = new QTableWidgetItem(tr(""));
+    ui->ClientUserTable->setItem(NextRow, 0, IdItem);
+    ui->ClientUserTable->setItem(NextRow, 1, ReadyItem);
+    ui->stackedWidget->setCurrentIndex(2);
+    ui->UsernameLabel->setText(tr("Please enter a username"));
+}
+
 void MultiPlayerScreen::UsernameEnterButtonClicked()
 {
     // Add some checks for this.
@@ -83,15 +95,7 @@ void MultiPlayerScreen::UsernameEnterButtonClicked()
     QString UsernameInput = ui->UsernameInputBox->text();
     if(!tcpClient.isNull())
     {
-        // Send your username to the server
         emit ClientSendUsername(UsernameInput);
-        int NextRow = ui->ClientUserTable->rowCount();
-        ui->ClientUserTable->insertRow(NextRow);
-        QTableWidgetItem* IdItem = new QTableWidgetItem(UsernameInput);
-        QTableWidgetItem* ReadyItem = new QTableWidgetItem(tr(""));
-        ui->ClientUserTable->setItem(NextRow, 0, IdItem);
-        ui->ClientUserTable->setItem(NextRow, 1, ReadyItem);
-        ui->stackedWidget->setCurrentIndex(2);
     }
     else
     {
@@ -244,6 +248,9 @@ void MultiPlayerScreen::JoinServerButtonClicked()
     connect(tcpClient, &TcpClient::UserStateChanged, this, &MultiPlayerScreen::UpdateClientState);
     connect(tcpClient, &TcpClient::OtherClientDisconnected, this, &MultiPlayerScreen::RemoveUserFromClientTable);
     connect(tcpClient, &TcpClient::ClientScoreboardStateChanged, this, [this](QString Username){emit UpdateScoreboardState(Username);});
+    connect(tcpClient, &TcpClient::ClientReturnToLobby, this, [this](){emit CanReturnToLobby(2);});
+    connect(tcpClient, &TcpClient::UsernameAlreadyTaken, this, [this](){ui->UsernameLabel->setText(tr("Username Already Taken, Please Enter Another!"));});
+    connect(tcpClient, &TcpClient::UsernameAccepted, this, &MultiPlayerScreen::ClientUsernameAccepted);
     connect(this, &MultiPlayerScreen::ClientSendAnswer, tcpClient, &TcpClient::RequestNewAnswer);
     connect(this, &MultiPlayerScreen::CloseClient, tcpClient, &TcpClient::CloseClient);
     connect(this, &MultiPlayerScreen::ClientSendUsername, tcpClient, &TcpClient::SendUsername);
@@ -364,16 +371,27 @@ void MultiPlayerScreen::StartGameButtonClicked()
     ui->StartGameButton->setText("Start Game");
 }
 
-void MultiPlayerScreen::CheckAllUsersReady()
+void MultiPlayerScreen::CheckAllUsersReady(QString Button)
 {
-    if(tcpServer->AllPlayersReady())
+
+    if(!tcpServer->AllPlayersReady())
+    {
+        emit NotAllPlayersReady();
+        return;
+    }
+    if(Button == "Again")
     {
         emit CanPlayAgain();
         game->StartMultiplayerGame();
         ui->WordLabel->setText(game->GetCurrentNumber());
     }
+    // Else we are bring all the players back to the lobby
     else
-        emit NotAllPlayersReady();
+    {
+        emit CanReturnToLobby(1);
+        // Turn this into a slot
+        tcpServer->MessageAll(ServerMessageTypes::GameReturnToLobby, "");
+    }
 }
 
 void MultiPlayerScreen::DisplayError(QString SocketError)

@@ -13,7 +13,10 @@ enum class ServerMessageTypes
     GameSendUsername,
     GameSendServerUsername,
     GameUpdateUserStatus,
-    GameClientDisconnect
+    GameClientDisconnect,
+    GameReturnToLobby,
+    GameUsernameTaken,
+    GameUsernameAccepted,
 };
 
 TcpClient::TcpClient(QObject *parent)
@@ -155,6 +158,18 @@ void TcpClient::MessageRecieved()
         {
             QString Username = JsonObj["Data"].toString();
             emit OtherClientDisconnected(Username);
+        }
+        else if(JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameReturnToLobby))
+        {
+            emit ClientReturnToLobby();
+        }
+        else if(JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameUsernameTaken))
+        {
+            emit UsernameAlreadyTaken();
+        }
+        else if(JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameUsernameAccepted))
+        {
+            emit UsernameAccepted();
         }
     }
 }
