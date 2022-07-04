@@ -48,7 +48,6 @@ void Game::HandleClientDisconnect(int ClientId)
 {
     // If a client has left then remove them from the scores hashMap
     ClientScores.remove(ClientId);
-    ClientUsersnames.remove(ClientId);
 }
 
 QString Game::CheckServerAnswer(QString answer)
@@ -227,7 +226,6 @@ QString Game::Increment()
 {
     if(CurrentNumber + 1 == EnglishNumbers.end())
     {
-        qDebug() << "Over!";
         return "";
     }
     CurrentNumber++;

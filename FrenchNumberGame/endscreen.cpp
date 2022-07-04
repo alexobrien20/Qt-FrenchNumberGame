@@ -32,6 +32,7 @@ void EndScreen::SetScore(int Score)
     ui->ScoreLabel->setText(ScoreText);
 }
 
+//this is largely the same as the method in multiplayerscreen
 void EndScreen::UpdateScoreboardState(QString Username)
 {
     QList<QTableWidgetItem*> Matches = ui->Scoreboard->findItems(Username, Qt::MatchExactly);

@@ -20,15 +20,11 @@ MultiPlayerScreen::MultiPlayerScreen(QWidget *parent) :
     connect(ui->ClearButton, &QPushButton::clicked, this, &MultiPlayerScreen::ClearButtonClicked);
 
     connect(ui->UsernameEnterButton, &QPushButton::clicked, this, &MultiPlayerScreen::UsernameEnterButtonClicked);
-    connect(ui->ReadyButton, &QPushButton::clicked, this, &MultiPlayerScreen::ReadyButtonClicked);
+    connect(ui->ReadyButton, &QPushButton::clicked, this, [this](){emit UserReady("UserTable");});
     connect(ui->ReadyButton, &QPushButton::clicked, this, [this]{UpdateClientState(Username);});
     connect(ui->UsernameMenuButton, &QPushButton::clicked, this, &MultiPlayerScreen::MenuButtonClicked);
 }
 
-void MultiPlayerScreen::ReadyButtonClicked()
-{
-    emit UserReady("UserTable");
-}
 
 void MultiPlayerScreen::PlayAgainButtonClicked()
 {
@@ -37,9 +33,9 @@ void MultiPlayerScreen::PlayAgainButtonClicked()
 
 void MultiPlayerScreen::StartServerClicked()
 {
+    // Maybe add validators for this.
     ServerAddress = QHostAddress(ui->HostInput->text());
     ServerPort = ui->PortInput->text().toUInt();
-    qDebug() << ServerPort;
     ui->stackedWidget->setCurrentIndex(4);
 }
 
@@ -109,7 +105,6 @@ void MultiPlayerScreen::UsernameEnterButtonClicked()
     {
         qDebug() << ServerAddress << " " << ServerPort;
         TcpServer* tcpServerSocket = new TcpServer(ServerAddress, ServerPort, UsernameInput, this);
-//        TcpServer* tcpServerSocket = new TcpServer(QHostAddress::Any, 35571, UsernameInput, this);
         tcpServer = tcpServerSocket;
         connect(this, &MultiPlayerScreen::CloseServer, tcpServer, &TcpServer::CloseServer);
         connect(tcpServer, &TcpServer::ClientUsernameRecieved, this, &MultiPlayerScreen::UpdateServerUserTable);
@@ -210,20 +205,6 @@ void MultiPlayerScreen::DisconnectSocket()
     }
 }
 
-
-//void MultiPlayerScreen::StartServerButtonClicked()
-//{
-//    // Check this for conversion + input validation
-//    // What if this errors?
-//    TcpServer* tcpServerSocket = new TcpServer(QHostAddress::Any, 35571, this);
-//    tcpServer = tcpServerSocket;
-//    connect(this, &MultiPlayerScreen::CloseServer, tcpServer, &TcpServer::CloseServer);
-//    connect(tcpServer, &TcpServer::ClientUsernameRecieved, this, &MultiPlayerScreen::UpdateServerUserTable);
-//    connect(this, &MultiPlayerScreen::ServerSendUsername, tcpServer, &TcpServer::SetServerUsername);
-//    ServerHostB = true;
-//    ui->stackedWidget->setCurrentIndex(4);
-//}
-
 void MultiPlayerScreen::JoinServerButtonClicked()
 {
     QHostAddress ServerIP = QHostAddress(ui->HostInput->text());
@@ -231,10 +212,9 @@ void MultiPlayerScreen::JoinServerButtonClicked()
     // Add validators for this!
     tcpClient = new TcpClient;
     connect(tcpClient, &TcpClient::ClientErrorSignal, this, &MultiPlayerScreen::DisplayError);
-//    connect(tcpClient, &TcpClient::ClientConnectedSignal, this, &MultiPlayerScreen::ClientConnected);
     connect(tcpClient, &TcpClient::ConnectionAccepted, this, &MultiPlayerScreen::ClientConnected);
     connect(tcpClient, &TcpClient::GameStarted, this, &MultiPlayerScreen::SetUpGameScreen);
-    connect(tcpClient, &TcpClient::GameUpdated, this, &MultiPlayerScreen::GameUpdated);
+    connect(tcpClient, &TcpClient::GameUpdated, this, [this](QString Question){ui->WordLabel->setText(Question);});
     connect(tcpClient, &TcpClient::GameEnded, this, [this](int Score, bool BClient){emit GameEnded(Score, BClient, Username);});
     connect(tcpClient, &TcpClient::GameScoreUpdate, [this](int Score, QString Username, bool State){emit GameScoreUpdated(Score, Username, State);});
     connect(tcpClient, &TcpClient::ClientDisconnected, this, &MultiPlayerScreen::HandleClientDisconnect);
@@ -266,11 +246,6 @@ void MultiPlayerScreen::HandleClientDisconnect()
     ui->stackedWidget->setCurrentIndex(0);
     tcpClient->deleteLater();
     ui->ClientUserTable->setRowCount(0);
-}
-
-void MultiPlayerScreen::GameUpdated(QString question)
-{
-    ui->WordLabel->setText(question);
 }
 
 void MultiPlayerScreen::SetUpGameScreen(QString question)

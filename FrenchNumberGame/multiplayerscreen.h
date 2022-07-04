@@ -25,7 +25,6 @@ public:
 public slots:
     void DisconnectSocket();
     void ChangeWidgetIndex(int);
-    void ReadyButtonClicked();
     void PlayAgainButtonClicked();
     void CheckAllUsersReady(QString);
 
@@ -47,14 +46,12 @@ signals:
     void CanReturnToLobby(int);
 
 private slots:
-//    void StartServerButtonClicked();
     void JoinServerButtonClicked();
     void MenuButtonClicked();
     void ClientConnected();
     void StartGameButtonClicked();
     void DisplayError(QString);
     void SetUpGameScreen(QString);
-    void GameUpdated(QString);
     void SkipButtonClicked();
     void ClearButtonClicked();
     void EnterButtonClicked();
@@ -75,10 +72,6 @@ private:
     QHostAddress ServerAddress;
     quint16 ServerPort;
     Ui::MultiPlayerScreen *ui;
-//    TcpServer* tcpServer = nullptr;
-//    TcpClient* tcpClient = nullptr;
-//    QPointer<TcpClient> ClientPtr;
-//    QPointer<TcpServer> ServerPtr;
     QPointer<TcpClient> tcpClient;
     QPointer<TcpServer> tcpServer;
     Game* game = nullptr;

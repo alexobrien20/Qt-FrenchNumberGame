@@ -41,7 +41,6 @@ private:
     TcpClient* tcpClient = nullptr;
     // ClientId : {"Score : ""}, {"Counter : ""}}
     QHash<int, QHash<QString, int>> ClientScores;
-    QHash<int, QString> ClientUsersnames;
     void LoadFrenchNumbers();
     void GenerateNumbers();
     QString NumberToFrench(uint);
