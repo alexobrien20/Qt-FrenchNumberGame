@@ -10,8 +10,7 @@ MultiPlayerScreen::MultiPlayerScreen(QWidget *parent) :
     QWidget* MainPage = ui->stackedWidget->widget(0);
     QWidget* SeverHostPage = ui->stackedWidget->widget(1);
     QWidget* GamePage = ui->stackedWidget->widget(3);
-//    connect(ui->StartServerButton, &QPushButton::clicked, this, &MultiPlayerScreen::StartServerButtonClicked);
-    connect(ui->StartServerButton, &QPushButton::clicked, this, [this](){ui->stackedWidget->setCurrentIndex(4);});
+    connect(ui->StartServerButton, &QPushButton::clicked, this, &MultiPlayerScreen::StartServerClicked);
     connect(ui->JoinServerButton, &QPushButton::clicked, this, &MultiPlayerScreen::JoinServerButtonClicked);
     connect(ui->MainMenuButton, &QPushButton::clicked, this, &MultiPlayerScreen::MenuButtonClicked);
     connect(ui->StartGameButton, &QPushButton::clicked, this, &MultiPlayerScreen::StartGameButtonClicked);
@@ -23,6 +22,7 @@ MultiPlayerScreen::MultiPlayerScreen(QWidget *parent) :
     connect(ui->UsernameEnterButton, &QPushButton::clicked, this, &MultiPlayerScreen::UsernameEnterButtonClicked);
     connect(ui->ReadyButton, &QPushButton::clicked, this, &MultiPlayerScreen::ReadyButtonClicked);
     connect(ui->ReadyButton, &QPushButton::clicked, this, [this]{UpdateClientState(Username);});
+    connect(ui->UsernameMenuButton, &QPushButton::clicked, this, &MultiPlayerScreen::MenuButtonClicked);
 }
 
 void MultiPlayerScreen::ReadyButtonClicked()
@@ -33,6 +33,14 @@ void MultiPlayerScreen::ReadyButtonClicked()
 void MultiPlayerScreen::PlayAgainButtonClicked()
 {
     emit UserReady("Scoreboard");
+}
+
+void MultiPlayerScreen::StartServerClicked()
+{
+    ServerAddress = QHostAddress(ui->HostInput->text());
+    ServerPort = ui->PortInput->text().toUInt();
+    qDebug() << ServerPort;
+    ui->stackedWidget->setCurrentIndex(4);
 }
 
 void MultiPlayerScreen::UpdateUserTable(QString Username, bool BServer, bool BReady)
@@ -99,7 +107,9 @@ void MultiPlayerScreen::UsernameEnterButtonClicked()
     }
     else
     {
-        TcpServer* tcpServerSocket = new TcpServer(QHostAddress::Any, 35571, UsernameInput, this);
+        qDebug() << ServerAddress << " " << ServerPort;
+        TcpServer* tcpServerSocket = new TcpServer(ServerAddress, ServerPort, UsernameInput, this);
+//        TcpServer* tcpServerSocket = new TcpServer(QHostAddress::Any, 35571, UsernameInput, this);
         tcpServer = tcpServerSocket;
         connect(this, &MultiPlayerScreen::CloseServer, tcpServer, &TcpServer::CloseServer);
         connect(tcpServer, &TcpServer::ClientUsernameRecieved, this, &MultiPlayerScreen::UpdateServerUserTable);
@@ -117,10 +127,6 @@ void MultiPlayerScreen::UsernameEnterButtonClicked()
         ui->ServerUserTable->item(NextRow, 1)->setBackground(QColor(0,255,0));
         ui->stackedWidget->setCurrentIndex(1);
     }
-}
-
-int MultiPlayerScreen::FindUsernameRow(QString Username)
-{
 }
 
 void MultiPlayerScreen::UpdateServerState(QString Username)
@@ -220,25 +226,13 @@ void MultiPlayerScreen::DisconnectSocket()
 
 void MultiPlayerScreen::JoinServerButtonClicked()
 {
-    QString ServerIP = ui->HostInput->text();
-    int ServerPort = ui->PortInput->text().toInt();
+    QHostAddress ServerIP = QHostAddress(ui->HostInput->text());
+    quint16 ServerPort = ui->PortInput->text().toInt();
     // Add validators for this!
-//    tcpClient = new TcpClient(this);
-//    QPointer<TcpClient> ClientPtr(tcpCli//    else if(!tcpServer.isNull())
-    //    {
-    //        emit ServerSendUsername(UsernameInput);
-    //        ui->stackedWidget->setCurrentIndex(1);
-    //        int NextRow = ui->ServerUserTable->rowCount();
-    //        ui->ServerUserTable->insertRow(NextRow);
-    //        QTableWidgetItem* IdItem = new QTableWidgetItem(UsernameInput);
-    //        QTableWidgetItem* ReadyItem = new QTableWidgetItem(tr(""));
-    //        ui->ServerUserTable->setItem(NextRow, 0, IdItem);
-    //        ui->ServerUserTable->setItem(NextRow, 1, ReadyItem);
-    //        ui->ServerUserTable->item(NextRow, 1)->setBackground(QColor(0,255,0));
-    //    }ent);
     tcpClient = new TcpClient;
     connect(tcpClient, &TcpClient::ClientErrorSignal, this, &MultiPlayerScreen::DisplayError);
-    connect(tcpClient, &TcpClient::ClientConnectedSignal, this, &MultiPlayerScreen::ClientConnected);
+//    connect(tcpClient, &TcpClient::ClientConnectedSignal, this, &MultiPlayerScreen::ClientConnected);
+    connect(tcpClient, &TcpClient::ConnectionAccepted, this, &MultiPlayerScreen::ClientConnected);
     connect(tcpClient, &TcpClient::GameStarted, this, &MultiPlayerScreen::SetUpGameScreen);
     connect(tcpClient, &TcpClient::GameUpdated, this, &MultiPlayerScreen::GameUpdated);
     connect(tcpClient, &TcpClient::GameEnded, this, [this](int Score, bool BClient){emit GameEnded(Score, BClient, Username);});
@@ -251,11 +245,20 @@ void MultiPlayerScreen::JoinServerButtonClicked()
     connect(tcpClient, &TcpClient::ClientReturnToLobby, this, [this](){emit CanReturnToLobby(2);});
     connect(tcpClient, &TcpClient::UsernameAlreadyTaken, this, [this](){ui->UsernameLabel->setText(tr("Username Already Taken, Please Enter Another!"));});
     connect(tcpClient, &TcpClient::UsernameAccepted, this, &MultiPlayerScreen::ClientUsernameAccepted);
+    connect(tcpClient, &TcpClient::GameInProgress, this, &MultiPlayerScreen::HandleGameInProgress);
     connect(this, &MultiPlayerScreen::ClientSendAnswer, tcpClient, &TcpClient::RequestNewAnswer);
     connect(this, &MultiPlayerScreen::CloseClient, tcpClient, &TcpClient::CloseClient);
     connect(this, &MultiPlayerScreen::ClientSendUsername, tcpClient, &TcpClient::SendUsername);
     connect(this, &MultiPlayerScreen::UserReady, tcpClient, &TcpClient::SendUserStatus);
-    tcpClient->ConnectToServer(QHostAddress::Any, 35571);
+    tcpClient->ConnectToServer(ServerIP, ServerPort);
+}
+
+void MultiPlayerScreen::HandleGameInProgress()
+{
+    // Display an error message here.
+    ui->TitleLabel->setText(tr("That game is already in progress!"));
+    tcpClient->deleteLater();
+    ui->stackedWidget->setCurrentIndex(0);
 }
 
 void MultiPlayerScreen::HandleClientDisconnect()
@@ -266,18 +269,7 @@ void MultiPlayerScreen::HandleClientDisconnect()
 }
 
 void MultiPlayerScreen::GameUpdated(QString question)
-{//    else if(!tcpServer.isNull())
-    //    {
-    //        emit ServerSendUsername(UsernameInput);
-    //        ui->stackedWidget->setCurrentIndex(1);
-    //        int NextRow = ui->ServerUserTable->rowCount();
-    //        ui->ServerUserTable->insertRow(NextRow);
-    //        QTableWidgetItem* IdItem = new QTableWidgetItem(UsernameInput);
-    //        QTableWidgetItem* ReadyItem = new QTableWidgetItem(tr(""));
-    //        ui->ServerUserTable->setItem(NextRow, 0, IdItem);
-    //        ui->ServerUserTable->setItem(NextRow, 1, ReadyItem);
-    //        ui->ServerUserTable->item(NextRow, 1)->setBackground(QColor(0,255,0));
-    //    }
+{
     ui->WordLabel->setText(question);
 }
 
@@ -397,10 +389,18 @@ void MultiPlayerScreen::CheckAllUsersReady(QString Button)
 void MultiPlayerScreen::DisplayError(QString SocketError)
 {
     ui->ErrorLabel->setText(SocketError);
+    if(!tcpClient.isNull())
+        tcpClient->deleteLater();
+    else if(!tcpServer.isNull())
+        tcpServer->deleteLater();
 }
 
 void MultiPlayerScreen::MenuButtonClicked()
 {
+    if(!tcpClient.isNull())
+        tcpClient->deleteLater();
+    else if(!tcpServer.isNull())
+        tcpServer->deleteLater();
     emit MenuButtonClickedSignal();
 }
 

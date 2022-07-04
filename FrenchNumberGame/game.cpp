@@ -4,18 +4,10 @@
 #include <QDebug>
 #include <algorithm>
 
-Game::Game(TcpServer* TCPSERVER, QObject *parent)
-    : QObject{parent}, tcpServer{TCPSERVER}, GameFinished{false}
+Game::Game(QObject *parent)
+    : QObject{parent}, GameFinished{false}
 {
     LoadFrenchNumbers();
-    if(tcpServer)
-    {
-        connect(tcpServer, &TcpServer::ClientUsernameRecieved, this, &Game::AddClient);
-        connect(tcpServer, &TcpServer::ClientAnswerRecieved, this, &Game::CheckClientAnswer);
-        connect(tcpServer, &TcpServer::HandleClientDisconnect, this, &Game::HandleClientDisconnect);
-        connect(this, &Game::ClientGameUpdate, tcpServer, &TcpServer::MessageClient);
-        connect(this, &Game::GameScoreUpdate, tcpServer, &TcpServer::GetClientUsername);
-    }
 }
 
 Game::Game(TcpServer* TCPSERVER, uint Lowest, uint Highest, int Amount, QObject *parent)

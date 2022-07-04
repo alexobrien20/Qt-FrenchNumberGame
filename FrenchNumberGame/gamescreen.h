@@ -2,7 +2,6 @@
 #define GAMESCREEN_H
 
 #include <QMainWindow>
-#include <multiplayerscreen.h>
 #include <game.h>
 
 namespace Ui {
@@ -20,26 +19,15 @@ public:
 
 private slots:
     void EnterButtonClicked();
-    void SkipButtonClicked();
-    void ClearButtonClicked();
-
-public slots:
-    void UpdateLabel(QString);
 
 signals:
     void GameOverSignal(int);
 
 private:
     Ui::GameScreen *ui;
-    QVector<QString> FrenchNumbersInput;
-    QVector<QString> FrenchNumbers;
-    QVector<QString> EnglishNumbers;
-//    QVector<QString>::iterator CurrentNumber;
-    QVector<QString>::Iterator CurrentAnswer;
+    void CheckIfGameOver();
     QString CurrentNumber;
-    void CheckAnswer();
-    Game* game = nullptr;
-    MultiPlayerScreen MultiPlayerPage;
+    Game* game;
 };
 
 #endif // GAMESCREEN_H

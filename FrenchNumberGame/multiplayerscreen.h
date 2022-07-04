@@ -67,10 +67,13 @@ private slots:
     void RemoveUserFromServerTable(QString);
     void RemoveUserFromClientTable(QString);
     void ClientUsernameAccepted();
+    void HandleGameInProgress();
+    void StartServerClicked();
 
 private:
-    int FindUsernameRow(QString);
     void ResetTableStatus(QString);
+    QHostAddress ServerAddress;
+    quint16 ServerPort;
     Ui::MultiPlayerScreen *ui;
 //    TcpServer* tcpServer = nullptr;
 //    TcpClient* tcpClient = nullptr;

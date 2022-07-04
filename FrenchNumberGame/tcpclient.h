@@ -8,8 +8,7 @@ class TcpClient : public QObject
     Q_OBJECT
 public:
     TcpClient(QObject *parent = nullptr);
-    void ConnectToServer(const QHostAddress HostIP, int Port);
-    QAbstractSocket::SocketState GetState();
+    void ConnectToServer(const QHostAddress HostIP, quint16 Port);
 
 signals:
     void ClientErrorSignal(QString);
@@ -26,6 +25,8 @@ signals:
     void ClientReturnToLobby();
     void UsernameAlreadyTaken();
     void UsernameAccepted();
+    void GameInProgress();
+    void ConnectionAccepted();
 
 public slots:
     void RequestNewAnswer(QString);

@@ -2,24 +2,24 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-TcpServer::TcpServer(const QHostAddress Hostname, int PortNumber, QString Username, QObject *parent)
-    : QObject{parent}, HostIp{Hostname}, Port{PortNumber}, UserCount{1}, ServerUsername{Username.simplified()}
+TcpServer::TcpServer(const QHostAddress Hostname, quint16 PortNumber, QString Username, QObject *parent)
+    : QObject{parent}, GameStarted{false}, UserCount{1},
+      ServerUsername{Username.simplified()}
 {
-
     in.setVersion(QDataStream::Qt_6_2);
     tcpServer = new QTcpServer(this);
-    // COME BACK TO THE HOST ADDRESS + PORT INPUTS
-    if(!tcpServer->listen(QHostAddress::Any,35571))
+    if(!tcpServer->listen(Hostname, PortNumber))
     {
         qDebug() << "Server Listen Error!";
         qDebug() << tcpServer->errorString();
         return;
     }
-    QHostAddress ServerHostAddress = tcpServer->serverAddress();
-    QString IpAddress = QHostAddress(QHostAddress::LocalHost).toString();
-    qDebug() << tr("Server is running on IP : %1 Port : %2").arg(IpAddress).arg(tcpServer->serverPort());
+    QString IpAddress = tcpServer->serverAddress().toString();
+    quint16 Port = tcpServer->serverPort();
+    qDebug() << tr("Server is running on IP : %1 Port : %2").arg(IpAddress).arg(Port);
     connect(tcpServer, &QTcpServer::newConnection, this, &TcpServer::ClientConnected);
 }
+
 
 void TcpServer::MessageClient(ServerMessageTypes MessageType, int ClientId, QString DataToSend, int UserId)
 {
@@ -201,6 +201,22 @@ void TcpServer::ReadMessage()
 void TcpServer::ClientConnected()
 {
     QTcpSocket* clientSocket = tcpServer->nextPendingConnection();
+    // Need to check if the game is already in progress
+    if(GameStarted)
+    {
+        QJsonObject object
+        {
+            {"MessageType", QVariant::fromValue(ServerMessageTypes::GameInProgress).toJsonValue()},
+            {"Data", ""},
+        };
+        QJsonDocument jsonDoc{object};
+        QByteArray block;
+        QDataStream out(&block, QIODevice::WriteOnly);
+        out.setVersion(QDataStream::Qt_6_2);
+        out << jsonDoc.toJson(QJsonDocument::Compact);
+        clientSocket->write(block);
+        return;
+    }
     connect(clientSocket, &QIODevice::readyRead, this, &TcpServer::ReadMessage);
     connect(clientSocket, &QTcpSocket::disconnected, this, &TcpServer::HandleDisconnect);
     Connections.push_back(clientSocket);
@@ -209,6 +225,17 @@ void TcpServer::ClientConnected()
     ClientStates.insert(UserCount, false);
     UserCount++;
     qDebug() << "New Client has joined! There are now " << ClientIds.size() << " clients";
+    QJsonObject object
+    {
+        {"MessageType", QVariant::fromValue(ServerMessageTypes::GameConnectionAccepted).toJsonValue()},
+        {"Data", ""},
+    };
+    QJsonDocument jsonDoc{object};
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_6_2);
+    out << jsonDoc.toJson(QJsonDocument::Compact);
+    clientSocket->write(block);
 }
 
 void TcpServer::HandleDisconnect()
@@ -291,27 +318,15 @@ void TcpServer::MessageAll(ServerMessageTypes updateType, QString question)
 
 bool TcpServer::AllPlayersReady()
 {
-    for(auto value : ClientStates)
+    for(auto value : qAsConst(ClientStates))
     {
         if(value != true)
             return false;
     }
     std::fill(ClientStates.begin(), ClientStates.end(), false);
+    GameStarted = !GameStarted;
     return true;
 }
-
-bool TcpServer::StartGame(QString Question)
-{
-    // Check if all players are ready
-    for(auto value : ClientStates)
-    {
-        if(value != true)
-            return false;
-    }
-    MessageAll(ServerMessageTypes::GameStart, Question);
-    return true;
-}
-
 
 void TcpServer::CloseServer()
 {

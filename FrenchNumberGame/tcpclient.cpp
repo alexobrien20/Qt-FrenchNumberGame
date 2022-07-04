@@ -17,14 +17,13 @@ enum class ServerMessageTypes
     GameReturnToLobby,
     GameUsernameTaken,
     GameUsernameAccepted,
+    GameInProgress,
+    GameConnectionAccepted,
 };
 
 TcpClient::TcpClient(QObject *parent)
     : QObject{parent}
 {
-//    connect(tcpSocket, &QAbstractSocket::connected, this, &MultiPlayerScreen::ClientConnected);
-
-    // Add validators for this!
     tcpSocket = new QTcpSocket(this);
     in.setDevice(tcpSocket);
     in.setVersion(QDataStream::Qt_6_2);
@@ -34,8 +33,6 @@ TcpClient::TcpClient(QObject *parent)
     connect(tcpSocket, &QAbstractSocket::connected, this, &TcpClient::ClientConnected);
     connect(tcpSocket, &QIODevice::readyRead, this, &TcpClient::MessageRecieved);
     connect(tcpSocket, &QAbstractSocket::disconnected, this, &TcpClient::HandleDisconnect);
-    // This is deleted correctly yes?
-//    connect(tcpSocket, &QAbstractSocket::disconnected, this, [=](){ui->stackedWidget->setCurrentIndex(0);});
 }
 
 // Combine these two functions later.
@@ -91,29 +88,25 @@ void TcpClient::MessageRecieved()
     while(!in.atEnd())
     {
         in.startTransaction();
-
         QByteArray jsonData;
-
         in >> jsonData;
 
         if(!in.commitTransaction())
         {
-            qDebug() << "This happened!";
             return;
         }
+
         QJsonDocument JsonDoc = QJsonDocument::fromJson(jsonData);
         QJsonObject JsonObj = JsonDoc.object();
 
         if(JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameStart))
         {
             QString question = JsonObj["Data"].toString();
-            qDebug() << "Game Starting!";
             emit GameStarted(question);
         }
         else if (JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameEnd))
         {
             int Score = JsonObj["Data"].toString().toInt();
-            qDebug() << "Game End!";
             emit GameEnded(Score, true);
         }
         else if(JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameUpdate))
@@ -171,6 +164,14 @@ void TcpClient::MessageRecieved()
         {
             emit UsernameAccepted();
         }
+        else if(JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameInProgress))
+        {
+            emit GameInProgress();
+        }
+        else if(JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameConnectionAccepted))
+        {
+            emit ConnectionAccepted();
+        }
     }
 }
 
@@ -179,7 +180,7 @@ void TcpClient::ClientConnected()
     emit ClientConnectedSignal();
 }
 
-void TcpClient::ConnectToServer(const QHostAddress HostIp, int Port)
+void TcpClient::ConnectToServer(const QHostAddress HostIp, quint16 Port)
 {
     tcpSocket->connectToHost(HostIp, Port);
 }
@@ -212,15 +213,6 @@ void TcpClient::HandleError(QAbstractSocket::SocketError SocketError)
         error = tr("The following error occured %1.").arg(tcpSocket->errorString());
     }
     emit ClientErrorSignal(error);
-}
-
-QAbstractSocket::SocketState TcpClient::GetState()
-{
-    qDebug() << "This ran";
-    qDebug() << tcpSocket->state();
-    if(tcpSocket == nullptr)
-        return QAbstractSocket::UnconnectedState;
-    return tcpSocket->state();
 }
 
 void TcpClient::CloseClient()

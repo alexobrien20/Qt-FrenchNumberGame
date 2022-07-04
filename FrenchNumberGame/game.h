@@ -9,7 +9,7 @@ class Game : public QObject
 {
     Q_OBJECT
 public:
-    Game(TcpServer* TCPSERVER, QObject *parent = nullptr);
+    Game(QObject *parent = nullptr);
     Game(TcpServer* TCPSERVER, uint Lowest, uint Highest, int Amount, QObject *parent = nullptr);
     void StartGame(uint, uint, int);
     void StartMultiplayerGame();
