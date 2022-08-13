@@ -4,6 +4,7 @@
 #include <QObject>
 #include <tcpserver.h>
 #include <tcpclient.h>
+#include <numberconverter.h>
 
 class Game : public QObject
 {
@@ -23,6 +24,8 @@ public:
     void SkipClientAnswer(int);
     void ResetGame();
     void SetGameUsername(QString);
+    QString NumberToFrench(uint);
+    QString NumberToEnglish(uint);
 
 private slots:
     void AddClient(QString, int);
@@ -37,15 +40,12 @@ signals:
     void GameScoreUpdate(int, int, bool);
 
 private:
+    NumberConverter numberConverter;
     TcpServer* tcpServer = nullptr;
     TcpClient* tcpClient = nullptr;
     // ClientId : {"Score : ""}, {"Counter : ""}}
     QHash<int, QHash<QString, int>> ClientScores;
-    void LoadFrenchNumbers();
     void GenerateNumbers();
-    QString NumberToFrench(uint);
-    QString NumberToEnglish(uint);
-    QVector<QString> FrenchNumbersInput;
     QVector<QString> FrenchNumbers;
     QVector<QString> EnglishNumbers;
     QVector<QString>::iterator CurrentNumber;
