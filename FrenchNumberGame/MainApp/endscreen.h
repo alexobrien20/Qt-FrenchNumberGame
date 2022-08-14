@@ -23,12 +23,6 @@ public slots:
     void UpdateScoreboardState(QString);
     void NotAllPlayersReady();
 
-private slots:
-    void HandleAgainButtonClicked();
-    void HandleMenuButtonClicked();
-    void HandleMultiplayerAgain();
-    void HandleMultiplayerLobby();
-
 signals:
     void MenuButtonClicked();
     void MultiMenuButtonClicked();
@@ -44,6 +38,7 @@ private:
     TcpClient* tcpClient = nullptr;
     bool IsClient;
     QString ClientUsername;
+    void HandleMultiplayerButtonClicked(QString);
     void UpdateUserState();
 };
 
