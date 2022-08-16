@@ -7,9 +7,7 @@ MultiPlayerScreen::MultiPlayerScreen(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QWidget* MainPage = ui->stackedWidget->widget(0);
-    QWidget* SeverHostPage = ui->stackedWidget->widget(1);
-    QWidget* GamePage = ui->stackedWidget->widget(3);
+
     connect(ui->StartServerButton, &QPushButton::clicked, this, &MultiPlayerScreen::StartServerClicked);
     connect(ui->JoinServerButton, &QPushButton::clicked, this, &MultiPlayerScreen::JoinServerButtonClicked);
     connect(ui->MainMenuButton, &QPushButton::clicked, this, &MultiPlayerScreen::MenuButtonClicked);
@@ -17,11 +15,11 @@ MultiPlayerScreen::MultiPlayerScreen(QWidget *parent) :
 
     connect(ui->EnterButton, &QPushButton::clicked, this, &MultiPlayerScreen::EnterButtonClicked);
     connect(ui->SkipButton, &QPushButton::clicked, this, &MultiPlayerScreen::SkipButtonClicked);
-    connect(ui->ClearButton, &QPushButton::clicked, this, &MultiPlayerScreen::ClearButtonClicked);
+    connect(ui->ClearButton, &QPushButton::clicked, this, [this](){ui->UserInput->setText("");});
 
     connect(ui->UsernameEnterButton, &QPushButton::clicked, this, &MultiPlayerScreen::UsernameEnterButtonClicked);
     connect(ui->ReadyButton, &QPushButton::clicked, this, [this](){emit UserReady("UserTable");});
-    connect(ui->ReadyButton, &QPushButton::clicked, this, [this]{UpdateClientState(Username);});
+    connect(ui->ReadyButton, &QPushButton::clicked, this, [this]{UpdateUserStatus("Client", Username);});
     connect(ui->UsernameMenuButton, &QPushButton::clicked, this, &MultiPlayerScreen::MenuButtonClicked);
 }
 
@@ -66,20 +64,6 @@ void MultiPlayerScreen::UpdateServerUserTable(QString Username)
     ui->ServerUserTable->setItem(NextRow, 1, ReadyItem);
 }
 
-void MultiPlayerScreen::RemoveUserFromServerTable(QString Username)
-{
-    QList<QTableWidgetItem*> Matches = ui->ServerUserTable->findItems(Username, Qt::MatchExactly);
-    int UsernameRow = ui->ServerUserTable->row(Matches[0]);
-    ui->ServerUserTable->removeRow(UsernameRow);
-}
-
-void MultiPlayerScreen::RemoveUserFromClientTable(QString Username)
-{
-    QList<QTableWidgetItem*> Matches = ui->ClientUserTable->findItems(Username, Qt::MatchExactly);
-    int UsernameRow = ui->ClientUserTable->row(Matches[0]);
-    ui->ClientUserTable->removeRow(UsernameRow);
-}
-
 void MultiPlayerScreen::ClientUsernameAccepted()
 {
     int NextRow = ui->ClientUserTable->rowCount();
@@ -108,9 +92,9 @@ void MultiPlayerScreen::UsernameEnterButtonClicked()
         tcpServer = tcpServerSocket;
         connect(this, &MultiPlayerScreen::CloseServer, tcpServer, &TcpServer::CloseServer);
         connect(tcpServer, &TcpServer::ClientUsernameRecieved, this, &MultiPlayerScreen::UpdateServerUserTable);
-        connect(tcpServer, &TcpServer::ClientStateChanged, this, &MultiPlayerScreen::UpdateServerState);
+        connect(tcpServer, &TcpServer::ClientStateChanged, this, [this](QString Username){UpdateUserStatus("Server", Username);});
         connect(tcpServer, &TcpServer::ClientScoreboardStateChanged, this, [this](QString Username){emit UpdateScoreboardState(Username);});
-        connect(tcpServer, &TcpServer::RemoveClientFromTable, this, &MultiPlayerScreen::RemoveUserFromServerTable);
+        connect(tcpServer, &TcpServer::RemoveClientFromTable, this, [this](QString Username){RemoveUserFromTable("Server", Username);});
         connect(tcpServer, &TcpServer::SendUsernameAndScore, this, [this](QString Username, int Score, bool State){emit GameScoreUpdated(Score, Username, State);});
         ServerHostB = true;
         int NextRow = ui->ServerUserTable->rowCount();
@@ -124,31 +108,27 @@ void MultiPlayerScreen::UsernameEnterButtonClicked()
     }
 }
 
-void MultiPlayerScreen::UpdateServerState(QString Username)
+void MultiPlayerScreen::RemoveUserFromTable(QString TableName, QString Username)
 {
-    QList<QTableWidgetItem*> Matches = ui->ServerUserTable->findItems(Username, Qt::MatchExactly);
-    qDebug() << Matches.size();
-    int UsernameRow = ui->ServerUserTable->row(Matches[0]);
-    QColor CurrentColour = ui->ServerUserTable->item(UsernameRow, 1)->background().color();
-    QColor newColour = CurrentColour == QColor("lime") ? QColor(255,255,255) : QColor("lime");
-    ui->ServerUserTable->item(UsernameRow, 1)->setBackground(newColour);
+    QTableWidget* Table = TableName == "Server" ? ui->ServerUserTable : ui->ClientUserTable;
+    QList<QTableWidgetItem*> Matches = Table->findItems(Username, Qt::MatchExactly);
+    int UsernameRow = Table->row(Matches[0]);
+    Table->removeRow(UsernameRow);
 }
 
-void MultiPlayerScreen::UpdateClientState(QString Username)
+void MultiPlayerScreen::UpdateUserStatus(QString TableName, QString Username)
 {
-    qDebug() << "Searching for username " << Username;
-    QList<QTableWidgetItem*> Matches = ui->ClientUserTable->findItems(Username, Qt::MatchExactly);
-    int UsernameRow = ui->ClientUserTable->row(Matches[0]);
-    QColor CurrentColour = ui->ClientUserTable->item(UsernameRow, 1)->background().color();
+    QTableWidget* Table = TableName == "Server" ? ui->ServerUserTable : ui->ClientUserTable;
+    QList<QTableWidgetItem*> Matches = Table->findItems(Username, Qt::MatchExactly);
+    int UsernameRow = Table->row(Matches[0]);
+    QColor CurrentColour = Table->item(UsernameRow, 1)->background().color();
     QColor newColour = CurrentColour == QColor("lime") ? QColor(255,255,255) : QColor("lime");
-    ui->ClientUserTable->item(UsernameRow, 1)->setBackground(newColour);
+    Table->item(UsernameRow, 1)->setBackground(newColour);
 }
 
 void MultiPlayerScreen::ResetTableStatus(QString TableName)
 {
-    QTableWidget* Table = ui->ClientUserTable;
-    if(TableName == "Server")
-        Table = ui->ServerUserTable;
+    QTableWidget* Table = TableName == "Server" ? ui->ServerUserTable : ui->ClientUserTable;
     for(int row = 0; row < Table->rowCount(); row++)
     {
         if(Table->item(row, 0)->text() == "Server")
@@ -219,8 +199,8 @@ void MultiPlayerScreen::JoinServerButtonClicked()
     connect(tcpClient, &TcpClient::GameScoreUpdate, [this](int Score, QString Username, bool State){emit GameScoreUpdated(Score, Username, State);});
     connect(tcpClient, &TcpClient::ClientDisconnected, this, &MultiPlayerScreen::HandleClientDisconnect);
     connect(tcpClient, &TcpClient::NewUserJoined, this, &MultiPlayerScreen::UpdateUserTable);
-    connect(tcpClient, &TcpClient::UserStateChanged, this, &MultiPlayerScreen::UpdateClientState);
-    connect(tcpClient, &TcpClient::OtherClientDisconnected, this, &MultiPlayerScreen::RemoveUserFromClientTable);
+    connect(tcpClient, &TcpClient::UserStateChanged, this, [this](QString Username){UpdateUserStatus("Client", Username);});
+    connect(tcpClient, &TcpClient::OtherClientDisconnected, this, [this](QString Username){RemoveUserFromTable("Client", Username);});
     connect(tcpClient, &TcpClient::ClientScoreboardStateChanged, this, [this](QString Username){emit UpdateScoreboardState(Username);});
     connect(tcpClient, &TcpClient::ClientReturnToLobby, this, [this](){emit CanReturnToLobby(2);});
     connect(tcpClient, &TcpClient::UsernameAlreadyTaken, this, [this](){ui->UsernameLabel->setText(tr("Username Already Taken, Please Enter Another!"));});
@@ -250,7 +230,6 @@ void MultiPlayerScreen::HandleClientDisconnect()
 
 void MultiPlayerScreen::SetUpGameScreen(QString question)
 {
-    qDebug() << "Game set up!";
     emit CheckAndChangeWidget();
     ui->stackedWidget->setCurrentIndex(3);
     ui->WordLabel->setText(question);
@@ -295,12 +274,6 @@ void MultiPlayerScreen::SkipButtonClicked()
     }
     ui->UserInput->setText("");
 }
-
-void MultiPlayerScreen::ClearButtonClicked()
-{
-    ui->UserInput->setText("");
-}
-
 
 void MultiPlayerScreen::ClientConnected()
 {

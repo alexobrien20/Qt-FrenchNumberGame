@@ -53,22 +53,19 @@ private slots:
     void DisplayError(QString);
     void SetUpGameScreen(QString);
     void SkipButtonClicked();
-    void ClearButtonClicked();
     void EnterButtonClicked();
     void UsernameEnterButtonClicked();
     void UpdateServerUserTable(QString);
     void UpdateUserTable(QString, bool, bool);
     void HandleClientDisconnect();
-    void UpdateServerState(QString);
-    void UpdateClientState(QString);
-    void RemoveUserFromServerTable(QString);
-    void RemoveUserFromClientTable(QString);
     void ClientUsernameAccepted();
     void HandleGameInProgress();
     void StartServerClicked();
 
 private:
+    void UpdateUserStatus(QString, QString);
     void ResetTableStatus(QString);
+    void RemoveUserFromTable(QString, QString);
     QHostAddress ServerAddress;
     quint16 ServerPort;
     Ui::MultiPlayerScreen *ui;
