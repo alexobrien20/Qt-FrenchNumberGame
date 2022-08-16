@@ -91,7 +91,7 @@ color: rgb(239, 41, 41);</string>
        <item>
         <layout class="QGridLayout" name="gridLayout_2">
          <item row="0" column="1">
-          <widget class="QPlainTextEdit" name="ChatBox">
+          <widget class="QPlainTextEdit" name="ServerChatBox">
            <property name="readOnly">
             <bool>true</bool>
            </property>
@@ -202,7 +202,7 @@ color: rgb(239, 41, 41);</string>
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QPlainTextEdit" name="plainTextEdit"/>
+          <widget class="QPlainTextEdit" name="ClientChatBox"/>
          </item>
         </layout>
        </item>

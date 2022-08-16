@@ -74,6 +74,7 @@ private:
     Game* game = nullptr;
     bool ServerHostB = false;
     QString Username;
+    QString ServerHostUsername;
 };
 
 #endif // MULTIPLAYERSCREEN_H

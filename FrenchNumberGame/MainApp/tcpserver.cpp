@@ -14,10 +14,14 @@ TcpServer::TcpServer(const QHostAddress Hostname, quint16 PortNumber, QString Us
         qDebug() << tcpServer->errorString();
         return;
     }
+    connect(tcpServer, &QTcpServer::newConnection, this, &TcpServer::ClientConnected);
+}
+
+QString TcpServer::GetIpAndPort()
+{
     QString IpAddress = tcpServer->serverAddress().toString();
     quint16 Port = tcpServer->serverPort();
-    qDebug() << tr("Server is running on IP : %1 Port : %2").arg(IpAddress).arg(Port);
-    connect(tcpServer, &QTcpServer::newConnection, this, &TcpServer::ClientConnected);
+    return tr("Server is running on IP : %1 Port : %2").arg(IpAddress).arg(Port);
 }
 
 
@@ -36,12 +40,17 @@ void TcpServer::MessageClient(ServerMessageTypes MessageType, int ClientId, QStr
         object = CreateUsernameScoreJsonObject(DataToSend, ClientId, UserId);
 
     }
+    ClientSocket->write(CreateQDataStream(object));
+}
+
+QByteArray TcpServer::CreateQDataStream(QJsonObject object)
+{
     QJsonDocument jsonDoc{object};
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_6_2);
     out << jsonDoc.toJson(QJsonDocument::Compact);
-    ClientSocket->write(block);
+    return block;
 }
 
 void TcpServer::MessageClientData(ServerMessageTypes MessageType, QJsonObject DataToSend, int ClientId)
@@ -52,12 +61,7 @@ void TcpServer::MessageClientData(ServerMessageTypes MessageType, QJsonObject Da
         {"MessageType", QVariant::fromValue(MessageType).toJsonValue()},
         {"Data", DataToSend},
     };
-    QJsonDocument jsonDoc{object};
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_6_2);
-    out << jsonDoc.toJson(QJsonDocument::Compact);
-    ClientSocket->write(block);
+    ClientSocket->write(CreateQDataStream(object));
 }
 
 QJsonObject TcpServer::CreateUsernameScoreJsonObject(QString Score, int ClientId, int UserId)
@@ -80,22 +84,6 @@ void TcpServer::GetClientUsername(int Score, int ClientId, bool State)
     QString Username = ClientUsernames[ClientId];
     emit SendUsernameAndScore(Username, Score, State);
 }
-
-void TcpServer::SendNewQuestion(QString newQuestion, int ClientId)
-{
-    QTcpSocket* ClientSocket = ClientIndex[ClientId];
-    QJsonObject object
-    {
-        {"MessageType", QVariant::fromValue(ServerMessageTypes::GameUpdate).toJsonValue()},
-        {"Data", newQuestion},
-    };
-    QJsonDocument jsonDoc{object};
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_6_2);
-    out << jsonDoc.toJson(QJsonDocument::Compact);
-    ClientSocket->write(block);
-  }
 
 void TcpServer::ReadMessage()
 {
@@ -125,7 +113,6 @@ void TcpServer::ReadMessage()
         {
             QString userAnswer = JsonObj["Answer"].toString();
             int ClientId = ClientIds[clientSocket];
-            qDebug() << "Answer recieved from client " << userAnswer;
             emit ClientAnswerRecieved(userAnswer, ClientId);
         }
         else if(JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameUpdateUserStatus))
@@ -134,7 +121,6 @@ void TcpServer::ReadMessage()
             ClientStates[ClientId] = !ClientStates[ClientId];
             QString Username = ClientUsernames[ClientId];
             QString Table = JsonObj["Data"].toString();
-            qDebug() << "User : " << Username << " now has state : " << ClientStates[ClientId];
             // Msg the new State to all clients so it appears correctly on their screen
             QJsonObject Data
             {
@@ -142,7 +128,6 @@ void TcpServer::ReadMessage()
                 {"Table",  Table},
             };
             MessageOtherClientsData(ServerMessageTypes::GameUpdateUserStatus, Data, ClientId);
-//            MessageOtherClients(ServerMessageTypes::GameUpdateUserStatus, Username, ClientId);
             qDebug() << "Table that changed " << Table;
             if(Table == "Scoreboard")
                 emit ClientScoreboardStateChanged(Username);
@@ -209,12 +194,7 @@ void TcpServer::ClientConnected()
             {"MessageType", QVariant::fromValue(ServerMessageTypes::GameInProgress).toJsonValue()},
             {"Data", ""},
         };
-        QJsonDocument jsonDoc{object};
-        QByteArray block;
-        QDataStream out(&block, QIODevice::WriteOnly);
-        out.setVersion(QDataStream::Qt_6_2);
-        out << jsonDoc.toJson(QJsonDocument::Compact);
-        clientSocket->write(block);
+        clientSocket->write(CreateQDataStream(object));
         return;
     }
     connect(clientSocket, &QIODevice::readyRead, this, &TcpServer::ReadMessage);
@@ -230,12 +210,7 @@ void TcpServer::ClientConnected()
         {"MessageType", QVariant::fromValue(ServerMessageTypes::GameConnectionAccepted).toJsonValue()},
         {"Data", ""},
     };
-    QJsonDocument jsonDoc{object};
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_6_2);
-    out << jsonDoc.toJson(QJsonDocument::Compact);
-    clientSocket->write(block);
+    clientSocket->write(CreateQDataStream(object));
 }
 
 void TcpServer::HandleDisconnect()
@@ -262,17 +237,13 @@ void TcpServer::MessageOtherClientsData(ServerMessageTypes UpdateType, QJsonObje
         {"MessageType", QVariant::fromValue(UpdateType).toJsonValue()},
         {"Data", Data},
     };
-    QJsonDocument jsonDoc{object};
-    for(const auto &key : ClientIndex.keys())
+    for(auto it = ClientIndex.begin(); it != ClientIndex.end(); it++)
     {
+        auto key = it.key();
         if(key == ClientId)
             continue;
         QTcpSocket* connection = ClientIndex[key];
-        QByteArray block;
-        QDataStream out(&block, QIODevice::WriteOnly);
-        out.setVersion(QDataStream::Qt_6_2);
-        out << jsonDoc.toJson(QJsonDocument::Compact);
-        connection->write(block);
+        connection->write(CreateQDataStream(object));
     }
 }
 
@@ -283,18 +254,13 @@ void TcpServer::MessageOtherClients(ServerMessageTypes UpdateType, QString Data,
         {"MessageType", QVariant::fromValue(UpdateType).toJsonValue()},
         {"Data", Data},
     };
-    QJsonDocument jsonDoc{object};
     for(auto it = ClientIndex.begin(); it != ClientIndex.end(); it++)
     {
         auto key = it.key();
         if(key == ClientId)
             continue;
         QTcpSocket* connection = ClientIndex[key];
-        QByteArray block;
-        QDataStream out(&block, QIODevice::WriteOnly);
-        out.setVersion(QDataStream::Qt_6_2);
-        out << jsonDoc.toJson(QJsonDocument::Compact);
-        connection->write(block);
+        connection->write(CreateQDataStream(object));
     }
 }
 
@@ -305,14 +271,9 @@ void TcpServer::MessageAll(ServerMessageTypes updateType, QString question)
         {"MessageType", QVariant::fromValue(updateType).toJsonValue()},
         {"Data", question},
     };
-    QJsonDocument jsonDoc{object};
     for (auto connection : Connections)
     {
-        QByteArray block;
-        QDataStream out(&block, QIODevice::WriteOnly);
-        out.setVersion(QDataStream::Qt_6_2);
-        out << jsonDoc.toJson(QJsonDocument::Compact);
-        connection->write(block);
+        connection->write(CreateQDataStream(object));
     }
 }
 

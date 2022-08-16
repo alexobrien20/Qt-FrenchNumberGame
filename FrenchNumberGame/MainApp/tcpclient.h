@@ -27,11 +27,11 @@ signals:
     void UsernameAccepted();
     void GameInProgress();
     void ConnectionAccepted();
+    void ServerHostJoined(QString, bool, bool);
 
 public slots:
     void RequestNewAnswer(QString);
     void SendUsername(QString);
-    void CloseClient();
     void SendUserStatus(QString);
 
 private slots:

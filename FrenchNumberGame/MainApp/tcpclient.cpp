@@ -134,7 +134,7 @@ void TcpClient::MessageRecieved()
         {
             QString Username = JsonObj["Data"].toString();
             qDebug() << "Server host joined with username " << Username;
-            emit NewUserJoined(Username, true, 1);
+            emit ServerHostJoined(Username, true, 1);
         }
         else if(JsonObj["MessageType"].toInt() == static_cast<int>(ServerMessageTypes::GameUpdateUserStatus))
         {
@@ -215,8 +215,4 @@ void TcpClient::HandleError(QAbstractSocket::SocketError SocketError)
     emit ClientErrorSignal(error);
 }
 
-void TcpClient::CloseClient()
-{
-    if(tcpSocket->state() == QAbstractSocket::ConnectedState)
-        tcpSocket->deleteLater();
-}
+

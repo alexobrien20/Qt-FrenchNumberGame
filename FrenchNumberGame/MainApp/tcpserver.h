@@ -33,6 +33,7 @@ public:
     QHash<int, QTcpSocket*> ClientIndex;
     QHash<int, bool> ClientStates;
     bool GameStarted;
+    QString GetIpAndPort();
 
 signals:
     void ClientAnswerRecieved(QString, int);
@@ -47,7 +48,6 @@ signals:
 public slots:
     void CloseServer();
     void MessageClient(ServerMessageTypes, int, QString, int UserId = 0);
-    void SendNewQuestion(QString, int);
     void GetClientUsername(int, int, bool);
 
 private slots:
@@ -60,6 +60,7 @@ private:
     void MessageOtherClients(ServerMessageTypes, QString, int);
     void MessageOtherClientsData(ServerMessageTypes, QJsonObject, int);
     void MessageClientData(ServerMessageTypes, QJsonObject, int);
+    QByteArray CreateQDataStream(QJsonObject object);
     QTcpServer* tcpServer = nullptr;
     QVector<QTcpSocket*> Connections;
     const QHostAddress HostIp;
