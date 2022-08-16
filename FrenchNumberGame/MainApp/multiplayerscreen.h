@@ -55,14 +55,13 @@ private slots:
     void SkipButtonClicked();
     void EnterButtonClicked();
     void UsernameEnterButtonClicked();
-    void UpdateServerUserTable(QString);
-    void UpdateUserTable(QString, bool, bool);
     void HandleClientDisconnect();
     void ClientUsernameAccepted();
     void HandleGameInProgress();
     void StartServerClicked();
 
 private:
+    void AddUserToTable(QString, QString, bool);
     void UpdateUserStatus(QString, QString);
     void ResetTableStatus(QString);
     void RemoveUserFromTable(QString, QString);

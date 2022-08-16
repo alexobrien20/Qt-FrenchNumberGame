@@ -202,7 +202,11 @@ color: rgb(239, 41, 41);</string>
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QPlainTextEdit" name="ClientChatBox"/>
+          <widget class="QPlainTextEdit" name="ClientChatBox">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
