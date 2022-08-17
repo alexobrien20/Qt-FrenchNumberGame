@@ -39,12 +39,7 @@ void MultiPlayerScreen::StartServerClicked()
 
 void MultiPlayerScreen::ClientUsernameAccepted()
 {
-    int NextRow = ui->ClientUserTable->rowCount();
-    ui->ClientUserTable->insertRow(NextRow);
-    QTableWidgetItem* IdItem = new QTableWidgetItem(Username);
-    QTableWidgetItem* ReadyItem = new QTableWidgetItem(tr(""));
-    ui->ClientUserTable->setItem(NextRow, 0, IdItem);
-    ui->ClientUserTable->setItem(NextRow, 1, ReadyItem);
+    AddUserToTable("Client", Username, false);
     ui->stackedWidget->setCurrentIndex(2);
     ui->UsernameLabel->setText(tr("Please enter a username"));
 }
@@ -57,23 +52,19 @@ void MultiPlayerScreen::UsernameEnterButtonClicked()
     if(!tcpClient.isNull())
     {
         emit ClientSendUsername(UsernameInput);
+        return;
     }
-    else
-    {
-        ServerHostUsername = Username;
-        ServerHostB = true;
-        tcpServer = new TcpServer(ServerAddress, ServerPort, UsernameInput, this);
-        connect(this, &MultiPlayerScreen::CloseServer, tcpServer, &TcpServer::CloseServer);
-//        connect(tcpServer, &TcpServer::ClientUsernameRecieved, this, &MultiPlayerScreen::UpdateServerUserTable);
-        connect(tcpServer, &TcpServer::ClientUsernameRecieved, this, [this](QString Username){AddUserToTable("Server", Username, false);});
-        connect(tcpServer, &TcpServer::ClientStateChanged, this, [this](QString Username){UpdateUserStatus("Server", Username);});
-        connect(tcpServer, &TcpServer::ClientScoreboardStateChanged, this, [this](QString Username){emit UpdateScoreboardState(Username);});
-        connect(tcpServer, &TcpServer::RemoveClientFromTable, this, [this](QString Username){RemoveUserFromTable("Server", Username);});
-        connect(tcpServer, &TcpServer::SendUsernameAndScore, this, [this](QString Username, int Score, bool State){emit GameScoreUpdated(Score, Username, State);});
-        AddUserToTable("Server", Username, true);
-        ui->stackedWidget->setCurrentIndex(1);
-        ui->ServerChatBox->appendPlainText(tcpServer->GetIpAndPort());
-    }
+    ServerHostUsername = Username;
+    tcpServer = new TcpServer(ServerAddress, ServerPort, UsernameInput, this);
+    connect(this, &MultiPlayerScreen::CloseServer, tcpServer, &TcpServer::CloseServer);
+    connect(tcpServer, &TcpServer::ClientUsernameRecieved, this, [this](QString Username){AddUserToTable("Server", Username, false);});
+    connect(tcpServer, &TcpServer::ClientStateChanged, this, [this](QString Username){UpdateUserStatus("Server", Username);});
+    connect(tcpServer, &TcpServer::ClientScoreboardStateChanged, this, [this](QString Username){emit UpdateScoreboardState(Username);});
+    connect(tcpServer, &TcpServer::RemoveClientFromTable, this, [this](QString Username){RemoveUserFromTable("Server", Username);});
+    connect(tcpServer, &TcpServer::SendUsernameAndScore, this, [this](QString Username, int Score, bool State){emit GameScoreUpdated(Score, Username, State);});
+    AddUserToTable("Server", Username, true);
+    ui->stackedWidget->setCurrentIndex(1);
+    ui->ServerChatBox->appendPlainText(tcpServer->GetIpAndPort());
 }
 
 void MultiPlayerScreen::AddUserToTable(QString TableName, QString Username, bool BServer)
@@ -277,7 +268,6 @@ void MultiPlayerScreen::StartGameButtonClicked()
     {
         ui->ErrorLabel->setText(tr("Lowest must be greater than zero!"));
     }
-    // Check about deleting this variablwe
     if(!tcpServer->AllPlayersReady())
     {
         ui->StartGameButton->setText("Not all players are ready!");
@@ -288,7 +278,6 @@ void MultiPlayerScreen::StartGameButtonClicked()
     ui->stackedWidget->setCurrentIndex(3);
     ui->WordLabel->setText(game->GetCurrentNumber());
     connect(game, &Game::GameEnded, this, [this](int Score, bool BClient){emit GameEnded(Score, BClient, Username);});
-//    connect(game, &Game::GameScoreUpdate, this, [this](int Score){emit GameScoreUpdated(Score);});
     connect(this, &MultiPlayerScreen::GamePlayAgainReset, game, &Game::ResetGame);
     ui->StartGameButton->setText("Start Game");
 }

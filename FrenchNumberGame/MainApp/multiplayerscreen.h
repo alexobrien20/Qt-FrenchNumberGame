@@ -71,7 +71,6 @@ private:
     QPointer<TcpClient> tcpClient;
     QPointer<TcpServer> tcpServer;
     Game* game = nullptr;
-    bool ServerHostB = false;
     QString Username;
     QString ServerHostUsername;
 };

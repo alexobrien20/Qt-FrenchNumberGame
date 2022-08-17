@@ -40,10 +40,10 @@ void TcpServer::MessageClient(ServerMessageTypes MessageType, int ClientId, QStr
         object = CreateUsernameScoreJsonObject(DataToSend, ClientId, UserId);
 
     }
-    ClientSocket->write(CreateQDataStream(object));
+    ClientSocket->write(CreateQByteArray(object));
 }
 
-QByteArray TcpServer::CreateQDataStream(QJsonObject object)
+QByteArray TcpServer::CreateQByteArray(QJsonObject object)
 {
     QJsonDocument jsonDoc{object};
     QByteArray block;
@@ -61,7 +61,7 @@ void TcpServer::MessageClientData(ServerMessageTypes MessageType, QJsonObject Da
         {"MessageType", QVariant::fromValue(MessageType).toJsonValue()},
         {"Data", DataToSend},
     };
-    ClientSocket->write(CreateQDataStream(object));
+    ClientSocket->write(CreateQByteArray(object));
 }
 
 QJsonObject TcpServer::CreateUsernameScoreJsonObject(QString Score, int ClientId, int UserId)
@@ -194,7 +194,7 @@ void TcpServer::ClientConnected()
             {"MessageType", QVariant::fromValue(ServerMessageTypes::GameInProgress).toJsonValue()},
             {"Data", ""},
         };
-        clientSocket->write(CreateQDataStream(object));
+        clientSocket->write(CreateQByteArray(object));
         return;
     }
     connect(clientSocket, &QIODevice::readyRead, this, &TcpServer::ReadMessage);
@@ -210,7 +210,7 @@ void TcpServer::ClientConnected()
         {"MessageType", QVariant::fromValue(ServerMessageTypes::GameConnectionAccepted).toJsonValue()},
         {"Data", ""},
     };
-    clientSocket->write(CreateQDataStream(object));
+    clientSocket->write(CreateQByteArray(object));
 }
 
 void TcpServer::HandleDisconnect()
@@ -243,7 +243,7 @@ void TcpServer::MessageOtherClientsData(ServerMessageTypes UpdateType, QJsonObje
         if(key == ClientId)
             continue;
         QTcpSocket* connection = ClientIndex[key];
-        connection->write(CreateQDataStream(object));
+        connection->write(CreateQByteArray(object));
     }
 }
 
@@ -260,7 +260,7 @@ void TcpServer::MessageOtherClients(ServerMessageTypes UpdateType, QString Data,
         if(key == ClientId)
             continue;
         QTcpSocket* connection = ClientIndex[key];
-        connection->write(CreateQDataStream(object));
+        connection->write(CreateQByteArray(object));
     }
 }
 
@@ -273,7 +273,7 @@ void TcpServer::MessageAll(ServerMessageTypes updateType, QString question)
     };
     for (auto connection : Connections)
     {
-        connection->write(CreateQDataStream(object));
+        connection->write(CreateQByteArray(object));
     }
 }
 

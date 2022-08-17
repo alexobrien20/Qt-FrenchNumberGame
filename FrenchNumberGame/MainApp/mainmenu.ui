@@ -14,6 +14,9 @@
    <string>MainMenu</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
