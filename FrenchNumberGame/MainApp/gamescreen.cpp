@@ -20,7 +20,7 @@ void GameScreen::StartGame(uint Lowest, uint Highest, int Amount)
 
 void GameScreen::EnterButtonClicked()
 {
-    QString UserAnswer = ui->UserInput->text();
+    QString UserAnswer = ui->UserInput->text().trimmed();
     game->CheckAnswer(UserAnswer);
     CheckIfGameOver();
 }

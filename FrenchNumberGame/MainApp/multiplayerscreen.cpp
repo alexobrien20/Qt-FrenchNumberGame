@@ -211,7 +211,7 @@ void MultiPlayerScreen::SetUpGameScreen(QString question)
 void MultiPlayerScreen::EnterButtonClicked()
 {
     // If server then just update normally
-    QString UserAnswer = ui->UserInput->text();
+    QString UserAnswer = ui->UserInput->text().trimmed();
     if(tcpServer)
     {
         QString CurrentNumber = game->CheckServerAnswer(UserAnswer);
