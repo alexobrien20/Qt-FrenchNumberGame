@@ -63,7 +63,7 @@ QString Game::CheckServerAnswer(QString answer)
             if(ClientScores[key]["Counter"] == AmountOfNumbers - 1)
             {
                 emit ClientGameUpdate(ServerMessageTypes::GameScoreUpdate, key, ServerScore);
-                emit GameScoreUpdate(ClientScores[key]["Score"], key, true);
+                emit GameScoreUpdate(ClientScores[key]["Score"], key, false);
             }
         }
         GameFinished = true;
